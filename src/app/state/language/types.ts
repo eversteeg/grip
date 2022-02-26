@@ -1,0 +1,166 @@
+import { Locale } from 'faralley-ui-kit';
+
+export interface GenericErrorMessages {
+    email: string;
+    required: string;
+    telephone: string;
+    uri: string;
+}
+
+export interface LanguageState {
+    dialect: Dialect;
+    genericErrorMessages: GenericErrorMessages;
+    isLoading: boolean;
+    isLocaleChanged: boolean;
+    locale: Locales;
+    translations: Translations;
+}
+
+export interface Dialect {
+    [key: string]: string;
+}
+
+export type Locales = typeof Locale['EN'] | typeof Locale['NL'];
+
+export interface Translations {
+    Add: string;
+    AddDescription: string;
+    AddDescriptionOptional: string;
+    AddFile: string;
+    AddName: string;
+    AddNameOptional: string;
+    AppSettings: string;
+    BackToHome: string;
+    Cancel: string;
+    Change: string;
+    ChangePassword: string;
+    ChooseAnotherFile: string;
+    ChooseFile: string;
+    CloseWindow: string;
+    ContinueAnyway: string;
+    DateFormat: string;
+    DateFormatDateTime: string;
+    DateFormatLong: string;
+    DateFormatTime: string;
+    DateFormatXLong: string;
+    DragFile: string;
+    Email: string;
+    Error404: string;
+    Error404Text: string;
+    ErrorServerFailure: string;
+    ErrorUnauthorizedCall: string;
+    ErrorUpdatePasswordNotEqual: string;
+    ForgotPassword: string;
+    ForgotPasswordText: string;
+    GenericErrorMessageEmail: string;
+    GenericErrorMessageRequired: string;
+    GenericErrorMessageTelephone: string;
+    GenericErrorMessageURI: string;
+    GoBack: string;
+    GoToLoginPage: string;
+    GoToPage: string;
+    Language: string;
+    Login: string;
+    Logout: string;
+    Maintenance: string;
+    NewPassword: string;
+    NewPasswordRepeat: string;
+    NewPasswordText: string;
+    No: string;
+    NoDataKnown: string;
+    NoEmailReceived: string;
+    Of: string;
+    OrganizationDetails: string;
+    Page: string;
+    Password: string;
+    PasswordReset: string;
+    PasswordResetText: string;
+    RememberLoginData: string;
+    ResetYourPassword: string;
+    ResetYourPasswordText: string;
+    ResultsOf: string;
+    RowsPerPage: string;
+    Save: string;
+    SendInstructions: string;
+    Settings: string;
+    Show: string;
+    Sort: string;
+    Support: string;
+    TermsOfUse: string;
+    TooBigToUpload: string;
+    TooLongFileName: string;
+    Unknown: string;
+    UnsavedChangesAlert: string;
+    UnsupportedAlert: string;
+    UnsupportedAlertText: string;
+    Upload: string;
+    UploadDate: string;
+    UploadFile: string;
+    Uploaded: string;
+    UploadedFiles: string;
+    UploadingFiles: string;
+    UseDarkTheme: string;
+    VAT: string;
+    Version: string;
+    WrongExtension: string;
+    Yes: string;
+    ZipCode: string;
+}
+
+export const GET_TRANSLATIONS = 'language.GET_TRANSLATIONS';
+
+interface GetTranslationsAction {
+    payload: Translations;
+    type: typeof GET_TRANSLATIONS;
+}
+
+export const SET_DIALECT = 'language.SET_DIALECT';
+
+interface SetDialectAction {
+    payload: Dialect;
+    type: typeof SET_DIALECT;
+}
+
+export const SET_GENERIC_ERROR_MESSAGES = 'language.SET_GENERIC_ERROR_MESSAGES';
+
+interface SetGenericErrorMessagesAction {
+    payload: GenericErrorMessages;
+    type: typeof SET_GENERIC_ERROR_MESSAGES;
+}
+
+export const SET_IS_LOADING = 'language.SET_IS_LOADING';
+
+interface SetIsLoadingAction {
+    payload: boolean;
+    type: typeof SET_IS_LOADING;
+}
+
+export const SET_IS_LOCALE_CHANGED = 'language.SET_IS_LOCALE_CHANGED';
+
+interface SetIsLocaleChangedAction {
+    payload: boolean;
+    type: typeof SET_IS_LOCALE_CHANGED;
+}
+
+export const SET_LOCALE = 'language.SET_LOCALE';
+
+interface SetLocaleAction {
+    payload: Locales;
+    type: typeof SET_LOCALE;
+}
+
+export const SET_TRANSLATIONS = 'language.SET_TRANSLATIONS';
+
+interface SetTranslationsAction {
+    payload: Translations;
+    type: typeof SET_TRANSLATIONS;
+}
+
+export type LanguageActionTypes =
+    | GetTranslationsAction
+    | SetDialectAction
+    | SetGenericErrorMessagesAction
+    | SetIsLoadingAction
+    | SetIsLocaleChangedAction
+    | SetLocaleAction
+    | SetTranslationsAction;

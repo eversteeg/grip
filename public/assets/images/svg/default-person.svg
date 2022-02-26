@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <g id="Showcase" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Icons" transform="translate(-88.000000, -1263.000000)">
+            <g id="Icons:-Dynamic" transform="translate(48.000000, 1220.000000)">
+                <g id="IconAvatar/Placeholder" transform="translate(40.000000, 43.000000)">
+                    <path d="M0,12 C0,18.624 5.376,24 12,24 C18.624,24 24,18.624 24,12 C24,5.376 18.624,0 12,0 C5.376,0 0,5.376 0,12 Z" id="Background" fill="#F2F4F6"></path>
+                    <path d="M4.8,15.8307692 C4.8,12.9758819 8.0235498,13.2 12,13.2 C15.9764502,13.2 19.2,12.9758819 19.2,15.8307692 C19.2,18.6856566 15.9764502,21 12,21 C8.0235498,21 4.8,18.6856566 4.8,15.8307692 Z M12,3.6 C13.992,3.6 15.6,5.208 15.6,7.2 C15.6,9.192 13.992,10.8 12,10.8 C10.008,10.8 8.4,9.192 8.4,7.2 C8.4,5.208 10.008,3.6 12,3.6 Z" id="User" fill="#96A5B8"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

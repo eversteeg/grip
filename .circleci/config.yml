@@ -1,0 +1,142 @@
+# Configuration based on:
+# - https://circleci.com/docs/2.0/language-javascript/
+# - https://github.com/circleci/frontend/blob/master/.circleci/config.yml
+# If you want to learn more about YAML check out the following documentation:
+# - https://learnxinyminutes.com/docs/yaml/
+# Read about caching dependencies:
+# - https://circleci.com/docs/2.0/caching/
+# This file is basically a copy of the configuration file from de
+version: 2.1
+orbs:
+    docker: circleci/docker@1.7.0
+
+references:
+    container_config: &container_config
+        docker:
+            - image: circleci/node:14.14.0
+              auth:
+                  username: $DOCKERHUB_USER
+                  password: $DOCKERHUB_PASS
+
+        working_directory: ~/com.grip.club.web
+    restore_dependencies: &restore_dependencies
+        restore_cache:
+            key: dependency-cache-{{ checksum "package.json" }}
+
+jobs:
+    install_dependencies:
+        <<: *container_config
+        steps:
+            - checkout
+#            - run:
+#                name: Update NPM
+#                command: sudo npm install -g npm@latest
+            - *restore_dependencies
+            - run:
+                name: Install dependencies
+                command: npm install
+            - save_cache:
+                key: dependency-cache-{{ checksum "package.json" }}
+                paths:
+                    - ./node_modules
+    lint_javascript:
+        <<: *container_config
+        steps:
+            - checkout
+            - *restore_dependencies
+            - run:
+                name: Run ESLint
+                command: npm run lint:js -- --format junit --output-file reports/junit/js-lint-results.xml
+            - store_test_results:
+                path: reports/junit
+            - store_artifacts:
+                path: reports/junit
+    lint_css:
+        <<: *container_config
+        steps:
+            - checkout
+            - *restore_dependencies
+            - run:
+                name: Run Stylelint
+                command: |
+                    mkdir -p reports/junit
+                    npm run lint:css -- --custom-formatter 'node_modules/stylelint-junit-formatter' --output-file reports/junit/css-lint-results.xml
+            - store_test_results:
+                path: reports/junit
+            - store_artifacts:
+                path: reports/junit
+    check_types:
+        <<: *container_config
+        steps:
+            - checkout
+            - *restore_dependencies
+            - run:
+                name: Run TSC
+                command: npm run check-types
+
+    build:
+      <<: *container_config
+      parameters:
+          image-tag:
+              type: string
+              description: Image tag used for pushing to docker
+      steps:
+        - checkout
+        - *restore_dependencies
+        - setup_remote_docker:
+            version: 19.03.13
+            docker_layer_caching: true
+        - docker/check:
+            registry: $DOCKER_REGISTRY
+            docker-username: DOCKER_USER
+            docker-password: DOCKER_PASS
+        - docker/build:
+            registry: $DOCKER_REGISTRY
+            image: com.grip.club.web
+            tag: << parameters.image-tag >>
+        - docker/push:
+            image: com.grip.club.web
+            registry: $DOCKER_REGISTRY
+            tag: << parameters.image-tag >>
+
+workflows:
+  develop:
+    when:
+      equal: [ develop, << pipeline.git.branch >> ]
+    jobs:
+      - install_dependencies:
+          context: [grip_docker]
+      - lint_css:
+          context: [grip_docker]
+          requires: [install_dependencies]
+      - check_types:
+          context: [grip_docker]
+          requires: [install_dependencies]
+      - build:
+          image-tag: 0.0.0-CI.$CIRCLE_BUILD_NUM
+          context: [ grip_docker ]
+          requires: [ install_dependencies, check_types, lint_css ]
+
+  master:
+    when:
+      equal: [ master, << pipeline.git.branch >> ]
+    jobs:
+      - install_dependencies:
+          context: [ grip_docker ]
+      - lint_css:
+          context: [ grip_docker ]
+          requires: [ install_dependencies ]
+      - check_types:
+          context: [ grip_docker ]
+          requires: [ install_dependencies ]
+
+  build-tagged-version:
+    jobs:
+     - build:
+         image-tag: $CIRCLE_TAG
+         context: [ grip_docker ]
+         filters:
+             tags:
+                 only: /[0-9]+\.[0-9]+\.[0-9]+.*/
+             branches:
+                 ignore: /.*/

@@ -1,3 +1,10 @@
+dist
+node_modules
+public/config.json
+.vs/VSWorkspaceState.json
+.vs/grip/v15/.suo
+.vs/slnx.sqlite
+
 # Logs
 logs
 *.log
