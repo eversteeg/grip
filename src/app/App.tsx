@@ -1,7 +1,7 @@
 import 'moment/locale/fr';
 import 'moment/locale/nl';
 import { Dialect, Locales, Translations } from './state/language/types';
-import { isEmpty, themeBasic, themeDark, Tooltip } from 'faralley-ui-kit';
+import { isEmpty, themeCyrillic, themeCyrillicDark, Tooltip } from 'faralley-ui-kit';
 import { isTheme, THEMES } from './globals/themes';
 import React, { FunctionComponent, useEffect } from 'react';
 import { setDialect, setIsLocaleChanged, setLocale } from './state/language/actions';
@@ -92,7 +92,7 @@ const App: FunctionComponent = () => {
     };
 
     return (
-        <ThemeProvider theme={settings.AppTheme === THEMES.dark ? themeDark : themeBasic}>
+        <ThemeProvider theme={settings.AppTheme === THEMES.cyrillicdark ? themeCyrillicDark : themeCyrillic}>
             <Helmet
                 htmlAttributes={{ lang: locale.toLowerCase() }}
                 meta={[
@@ -120,8 +120,7 @@ const App: FunctionComponent = () => {
                 <ScrollToTop />
                 {!isConfigLoading && !isLanguageLoading && !isPersistCodeTableLoading && (
                     <>
-                        {/* @TODO: think of something to make this easily adjustable where necessary.
-                        Default should still be the ui-kit value */}
+                        {/* @TODO: think of something to make this easily adjustable where necessary. Default should still be the ui-kit value */}
                         <Tooltip delay={2000} />
                         <Routes />
                     </>

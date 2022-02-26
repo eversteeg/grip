@@ -1,8 +1,4 @@
 {
-    "baseEntity": "string",
-    "baseUrl": "string",
-    "navajoPassword": "string",
-    "navajoUsername": "string",
     "reCaptchaSiteKey": "string",
-    "replyAddressSportlink": "string"
+    "replyAddressGrip": "string"
 }

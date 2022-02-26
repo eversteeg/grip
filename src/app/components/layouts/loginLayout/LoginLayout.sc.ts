@@ -1,5 +1,5 @@
-import styled, { css, SimpleInterpolation } from 'styled-components';
 import { ContentWidth } from '../../../../@types/Route';
+import styled from 'styled-components';
 
 interface StyledLoginLayoutProps {
     variant: number;
@@ -8,18 +8,7 @@ interface StyledLoginLayoutProps {
 export const StyledLoginLayout = styled.div<StyledLoginLayoutProps>`
     display: flex;
     flex-direction: column;
-    background-attachment: fixed;
-    background-position: top left, bottom right;
-    background-repeat: no-repeat;
-    background-size: 40%;
     min-height: 100vh;
-
-    ${({ variant }): SimpleInterpolation =>
-        variant &&
-        css`
-            background-image: url('/assets/images/backgrounds/${variant}.1.svg'),
-                url('/assets/images/backgrounds/${variant}.2.svg');
-        `}
 `;
 
 export const Header = styled.div`
