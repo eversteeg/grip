@@ -47,8 +47,10 @@ export interface Translations {
     Email: string;
     Error404: string;
     Error404Text: string;
+    ErrorOAuthFailed: string;
     ErrorServerFailure: string;
     ErrorUnauthorizedCall: string;
+    ErrorUnknown: string;
     ErrorUpdatePasswordNotEqual: string;
     ForgotPassword: string;
     ForgotPasswordText: string;

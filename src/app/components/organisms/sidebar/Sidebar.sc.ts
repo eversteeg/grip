@@ -33,8 +33,8 @@ export const Logo = styled.div`
     flex: 0 1 auto;
     align-items: center;
     margin: 32px auto 24px;
-    width: 120px;
-    min-height: 120px;
+    width: 180px;
+    min-height: 100px;
 
     img {
         display: block;

@@ -5,12 +5,11 @@ import LocalizedString from '../../../atoms/localizedString/LocalizedString';
 import { ROUTES } from '../../../../routing/routeDefinitions';
 import { StyledError404 } from './Error404.sc';
 import { useHistory } from 'react-router-dom';
-// import useSelector from '../../../../state/useSelector';
+import useSelector from '../../../../state/useSelector';
 
 const Error404: FunctionComponent = () => {
     const history = useHistory();
-    // const isLoggedIn = useSelector(({ user }) => user.isLoggedIn);
-    const isLoggedIn = false;
+    const isLoggedIn = useSelector(({ user }) => user.isLoggedIn);
 
     const onClickCallback = useCallback(() => {
         history.push(isLoggedIn ? ROUTES.vat.vatOverview : ROUTES.login.root);

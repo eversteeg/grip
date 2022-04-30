@@ -3,7 +3,7 @@ export interface ExternalRoutes {
 }
 
 export const EXTERNAL_ROUTES: ExternalRoutes = {
-    support: 'https://www.grip.nl/support/',
+    support: 'https://nl.wikipedia.org/wiki/Support',
 };
 
 export interface Routes {

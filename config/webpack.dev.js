@@ -60,11 +60,6 @@ module.exports = () =>
         output: {
             filename: '[name].[fullhash].min.js',
         },
-        plugins: [
-            new webpack.DefinePlugin({
-                'process.env.development': JSON.stringify('true'),
-            }),
-        ],
         stats: {
             children: true,
             errorDetails: true,

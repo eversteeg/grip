@@ -1,6 +1,7 @@
 import 'moment/locale/fr';
 import 'moment/locale/nl';
 import { Dialect, Locales, Translations } from './state/language/types';
+import { getPersistUser, setUserSettings } from './state/user/actions';
 import { isEmpty, themeCyrillic, themeCyrillicDark, Tooltip } from 'faralley-ui-kit';
 import { isTheme, THEMES } from './globals/themes';
 import React, { FunctionComponent, useEffect } from 'react';
@@ -17,7 +18,6 @@ import { LOCAL_STORAGE } from './globals/storage';
 import moment from 'moment';
 import Routes from './routing/Routes';
 import ScrollToTop from './components/atoms/scrollToTop/ScrollToTop';
-import { setUserSettings } from './state/user/actions';
 import { ThemeProvider } from 'styled-components';
 import useSelector from './state/useSelector';
 
@@ -63,6 +63,8 @@ const App: FunctionComponent = () => {
 
         const theme = localStorage.getItem(LOCAL_STORAGE.theme) || '';
 
+        // Do the user thing
+        dispatch(getPersistUser());
         // @TODO: figure out how to refresh this correctly
         // Set new locale for moment
         moment.locale(locale);

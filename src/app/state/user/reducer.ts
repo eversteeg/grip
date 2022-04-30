@@ -1,33 +1,46 @@
 import {
+    LOG_OUT,
     SET_HAS_LOGIN_ERROR,
     SET_IS_AUTHENTICATED,
     SET_IS_AUTHENTICATING,
     SET_IS_LOADING,
+    SET_IS_LOGGEDIN,
     SET_IS_PASSWORD_REQUESTED,
     SET_IS_PASSWORD_RESET,
+    SET_IS_PERSIST_LOADING,
     SET_IS_SETTINGS_LOADING,
     SET_IS_SETTINGS_REFRESH_REQUIRED,
     SET_IS_SETTINGS_SAVING,
+    SET_USER,
     SET_USER_SETTINGS,
-    UserSettingsActionTypes,
-    UserSettingsState,
+    UserActionTypes,
+    UserState,
 } from './types';
 
-const initialState: UserSettingsState = {
+const initialState: UserState = {
     hasLoginError: false,
     isAuthenticated: false,
     isAuthenticating: false,
     isLoading: false,
+    isLoggedIn: false,
     isPasswordRequested: false,
     isPasswordReset: false,
+    isPersistLoading: false,
     isSettingsLoading: false,
     isSettingsRefreshRequired: false,
     isSettingsSaving: false,
-    settings: {} as UserSettingsState['settings'],
+    loginError: {} as UserState['loginError'],
+    settings: {} as UserState['settings'],
+    user: {} as UserState['user'],
 };
 
-export default (state = initialState, action: UserSettingsActionTypes): UserSettingsState => {
+export default (state = initialState, action: UserActionTypes): UserState => {
     switch (action.type) {
+        case LOG_OUT:
+            return {
+                ...initialState,
+            };
+
         case SET_HAS_LOGIN_ERROR:
             return {
                 ...state,
@@ -50,6 +63,12 @@ export default (state = initialState, action: UserSettingsActionTypes): UserSett
             return {
                 ...state,
                 isLoading: action.payload,
+            };
+
+        case SET_IS_LOGGEDIN:
+            return {
+                ...state,
+                isLoggedIn: action.payload,
             };
 
         case SET_IS_PASSWORD_REQUESTED:
@@ -82,10 +101,22 @@ export default (state = initialState, action: UserSettingsActionTypes): UserSett
                 isSettingsSaving: action.payload,
             };
 
+        case SET_IS_PERSIST_LOADING:
+            return {
+                ...state,
+                isPersistLoading: action.payload,
+            };
+
         case SET_USER_SETTINGS:
             return {
                 ...state,
                 settings: action.payload,
+            };
+
+        case SET_USER:
+            return {
+                ...state,
+                user: action.payload,
             };
 
         default:

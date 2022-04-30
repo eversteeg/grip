@@ -1,9 +1,9 @@
 import { ButtonVariant, IconType, Input, InputPassword, InputType, SelectionControl, Status } from 'faralley-ui-kit';
+import { FormElementWrapper, ReCaptchaWrapper } from './LoginForm.sc';
 import React, { ChangeEvent, FunctionComponent, KeyboardEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { shallowEqual, useDispatch } from 'react-redux';
 import { authenticateUser } from '../../../state/user/actions';
 import CardBase from '../../../components/base/Base';
-import { FormElementWrapper } from './LoginForm.sc';
 import { isEnterKey } from '../../../utils/keyboardFunctions';
 import { LOCAL_STORAGE } from '../../../globals/storage';
 import LocalizedString from '../../../components/atoms/localizedString/LocalizedString';
@@ -12,7 +12,6 @@ import { Redirect } from 'react-router-dom';
 import { ROUTES } from '../../../routing/routeDefinitions';
 import { Translations } from '../../../state/language/types';
 import useSelector from '../../../state/useSelector';
-// import { ValidationError } from '../../../../@types/generated/definition/error/ValidationError';
 
 const LoginForm: FunctionComponent = () => {
     const dispatch = useDispatch();
@@ -27,35 +26,22 @@ const LoginForm: FunctionComponent = () => {
     const reCaptchaRef = useRef<ReCAPTCHA>(null);
     const reCaptchaSiteKey = useSelector(({ config }) => config.reCaptchaSiteKey);
     const [reCaptchaToken, setReCaptchaToken] = useState(null);
-    // const hasServerError = useSelector(({ error }) => error.hasServerError);
-    // const validationErrors: ValidationError[] = useSelector(({ user }) => user.oauthValidationErrors);
+    const hasServerError = useSelector(({ error }) => error.hasServerError);
 
-    const getErrorMessageKey = (): keyof Translations =>
-        // if (validationErrors.length !== 0) {
-        //     if (validationErrors.some((validationError) => validationError.Id === 'USER_IS_NOT_ACTIVATED')) {
-        //         return 'Error_UserNotActivated';
-        //     }
-
-        //     return 'Error_OAuthFailed';
-        // }
-
-        // if (hasServerError) {
-        //     return 'Error_ServerFailure';
-        // }
-
-        // return 'Error_OAuthFailed';
-        'Login';
-
-    const { hasLoginError, isAuthenticated, isAuthenticating } = useSelector(({ user }) => user, shallowEqual);
-
-    const isLoginPossible = password.length >= 8 && username;
-
-    const authenticateUserCallback = useCallback(() => {
-        if (reCaptchaRef.current) {
-            reCaptchaRef.current.execute();
+    const getErrorMessageKey = (): keyof Translations => {
+        if (hasServerError) {
+            return 'ErrorServerFailure';
         }
 
-        if (process.env.development === 'true' || reCaptchaToken) {
+        return 'ErrorOAuthFailed';
+    };
+
+    const { hasLoginError, isLoggedIn, isAuthenticating } = useSelector(({ user }) => user, shallowEqual);
+
+    const isLoginPossible = password.length >= 8 && username && reCaptchaToken;
+
+    const authenticateUserCallback = useCallback(() => {
+        if (reCaptchaToken) {
             dispatch(authenticateUser(username, password));
 
             if (isRememberMeChecked) {
@@ -158,18 +144,18 @@ const LoginForm: FunctionComponent = () => {
                         value="remember-me"
                     />
                 </FormElementWrapper>
-                {process.env.development !== 'true' && (
+                <ReCaptchaWrapper>
                     <ReCAPTCHA
                         hl={locale}
                         onChange={setReCaptchaTokenCallback}
                         ref={reCaptchaRef}
                         sitekey={reCaptchaSiteKey}
-                        size="invisible"
+                        size="compact"
                         type="image"
                     />
-                )}
+                </ReCaptchaWrapper>
             </CardBase>
-            {isAuthenticated && <Redirect to={ROUTES.vat.vatOverview} />}
+            {isLoggedIn && <Redirect to={ROUTES.vat.vatOverview} />}
         </>
     );
 };

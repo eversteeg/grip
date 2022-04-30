@@ -57,7 +57,7 @@ const LoginLayout: FunctionComponent<LoginLayoutProps> = ({ children, hasLogo = 
                 {hasLogo && (
                     // eslint-disable-next-line no-alert
                     <LogoWrapper onClick={() => alert(versionInfo)}>
-                        <SVG type="logo" />
+                        <SVG type="logo_small" />
                     </LogoWrapper>
                 )}
                 <Content contentWidth={contentWidth}>{children}</Content>

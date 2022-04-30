@@ -3,6 +3,8 @@ import thunk, { ThunkAction } from 'redux-thunk';
 import config from './config/reducer';
 import { createLogger } from 'redux-logger';
 import dialog from './dialog/reducer';
+import entity from './entity/reducer';
+import error from './error/reducer';
 import global from './global/reducer';
 import language from './language/reducer';
 import modal from './modal/reducer';
@@ -13,6 +15,8 @@ import user from './user/reducer';
 const rootReducer = combineReducers({
     config,
     dialog,
+    entity,
+    error,
     global,
     language,
     modal,

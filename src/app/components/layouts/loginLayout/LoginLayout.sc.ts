@@ -29,7 +29,7 @@ export const LogoWrapper = styled.div`
     display: flex;
     flex: 0 1 auto;
     justify-content: center;
-    margin: 0 auto 80px;
+    margin: 0 auto 20px;
     width: 280px;
 `;
 

@@ -3,6 +3,10 @@ export interface ConfigState extends Config {
 }
 
 export interface Config {
+    authenticationUrl: string;
+    baseEntity: string;
+    baseUrl: string;
+    clientSecret: string;
     reCaptchaSiteKey: string;
     replyAddressGrip: string;
 }

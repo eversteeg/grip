@@ -19,7 +19,7 @@ const TermsOfUse: FunctionComponent<TermsOfUseProps> = ({ isLoading }) => {
                 <LocalizedString
                     value="TermsOfUse"
                     variables={{
-                        url: `https://purl.sportlink.nl/${locale.toLocaleLowerCase()}/voorwaarden/club`,
+                        url: `https://${locale.toLocaleLowerCase()}.wikipedia.org/wiki/Gebruiksvoorwaarden`,
                     }}
                 />
             )}

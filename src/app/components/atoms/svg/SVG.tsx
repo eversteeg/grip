@@ -9,6 +9,7 @@ export interface SVGProps {
         | 'default-person'
         | 'error'
         | 'logo'
+        | 'logo_small'
         | 'message-send'
         | 'password-request'
         | 'password-reset-succes'

@@ -1,4 +1,8 @@
 {
+    "authenticationUrl": "string",
+    "baseEntity": "api",
+    "baseUrl": "string",
+    "clientSecret": "something_difficult",
     "reCaptchaSiteKey": "string",
     "replyAddressGrip": "string"
 }

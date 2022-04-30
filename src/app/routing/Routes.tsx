@@ -13,7 +13,7 @@ import useSelector from '../state/useSelector';
 
 const Routes: FunctionComponent = () => {
     const dispatch = useDispatch();
-    const { isAuthenticated } = useSelector(({ user }) => user, shallowEqual);
+    const { isAuthenticated, isLoggedIn } = useSelector(({ user }) => user, shallowEqual);
     const { pathname } = useLocation();
 
     const { privatePaths, privateRoutes } = useMemo(() => getPrivateRoutes(), []);
@@ -77,21 +77,21 @@ const Routes: FunctionComponent = () => {
         <>
             <RouteLayout
                 activeRoute={getActiveRoute([...privateRoutes, ...publicRoutes], pathname)}
-                isLoggedIn={isAuthenticated}
+                isLoggedIn={isLoggedIn}
                 pathname={pathname}
                 privatePaths={privatePaths}
             >
                 <Switch>
-                    {isAuthenticated && renderRoutes(privateRoutes)}
+                    {isLoggedIn && renderRoutes(privateRoutes)}
                     {renderRoutes(publicRoutes)}
-                    {!isAuthenticated && !publicPaths.includes(pathname) && isUnsupported && (
+                    {!isAuthenticated && !isLoggedIn && !publicPaths.includes(pathname) && isUnsupported && (
                         <Redirect to={ROUTES.login.unsupportedAlert} />
                     )}
-                    {((!isAuthenticated && privatePaths.includes(pathname)) ||
-                        (!isAuthenticated && !publicPaths.includes(pathname) && !isUnsupported)) && (
+                    {((!isLoggedIn && privatePaths.includes(pathname)) ||
+                        (!isAuthenticated && !isLoggedIn && !publicPaths.includes(pathname) && !isUnsupported)) && (
                         <Redirect to={ROUTES.login.root} />
                     )}
-                    {isAuthenticated && pathname === '/' && <Redirect to={ROUTES.vat.vatOverview} />}
+                    {isLoggedIn && pathname === '/' && <Redirect to={ROUTES.vat.vatOverview} />}
                     <BrowserRoute path={['*', ROUTES.error[404]]}>
                         <Error404Page />
                     </BrowserRoute>

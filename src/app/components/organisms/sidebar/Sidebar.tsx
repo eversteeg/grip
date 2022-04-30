@@ -4,7 +4,6 @@ import { NestedPrivateRouteChild, PrivateRoute } from '../../../../@types/Privat
 import React, { FunctionComponent, useCallback, useMemo } from 'react';
 import { setActiveRoute, setIsResetScrollingRequired, setIsSidebarVisible } from '../../../state/global/actions';
 import { ActiveRoute } from '../../../state/global/types';
-import AppLogo from '../../atoms/appLogo/AppLogo';
 import ButtonBar from './buttonBar/ButtonBar';
 import { getPrivateRoutes } from '../../../routing/helpers';
 import { getTranslation } from '../../../utils/translationFunctions';
@@ -94,23 +93,22 @@ const Sidebar: FunctionComponent = () => {
             </ButtonClose>
             <Logo>
                 <Link to={ROUTES.vat.vatOverview}>
-                    <AppLogo logo={{ Id: null, Url: Logo && Logo.Url }} />
+                    <LogoWrapper
+                        data-tooltip-component={
+                            process.env.version
+                                ? `${getTranslation('Version')} ${process.env.version || getTranslation('Unknown')}`
+                                : undefined
+                        }
+                        data-tooltip-delay
+                    >
+                        <SVG type="logo_small" />
+                    </LogoWrapper>
                 </Link>
             </Logo>
             <MenuWrapper>
                 <Menu items={menuItems} />
             </MenuWrapper>
             <ButtonBar onLogout={logoutCallback} />
-            <LogoWrapper
-                data-tooltip-component={
-                    process.env.version
-                        ? `${getTranslation('Version')} ${process.env.version || getTranslation('Unknown')}`
-                        : undefined
-                }
-                data-tooltip-delay
-            >
-                <SVG type="logo" />
-            </LogoWrapper>
         </StyledSidebar>
     );
 };

@@ -1,16 +1,22 @@
+import { ErrorObject } from '../../../@types/error/ErrorObject';
+import { User } from '../../../@types/user/User';
 import { UserSettings } from '../../../@types/user/UserSettings';
 
-export interface UserSettingsState {
+export interface UserState {
     hasLoginError: boolean;
     isAuthenticated: boolean;
     isAuthenticating: boolean;
     isLoading: boolean;
+    isLoggedIn: boolean;
     isPasswordRequested: boolean;
     isPasswordReset: boolean;
+    isPersistLoading: boolean;
     isSettingsLoading: boolean;
     isSettingsRefreshRequired: boolean;
     isSettingsSaving: boolean;
+    loginError: ErrorObject;
     settings: UserSettings;
+    user: User;
 }
 
 export const LOG_OUT = 'user.LOG_OUT';
@@ -53,6 +59,13 @@ interface SetIsLoadingAction {
     type: typeof SET_IS_LOADING;
 }
 
+export const SET_IS_LOGGEDIN = 'user.SET_IS_LOGGEDIN';
+
+interface SetIsLoggedInAction {
+    payload: boolean;
+    type: typeof SET_IS_LOGGEDIN;
+}
+
 export const SET_IS_PASSWORD_REQUESTED = 'user.SET_IS_PASSWORD_REQUESTED';
 
 interface SetIsPasswordRequestedAction {
@@ -65,6 +78,13 @@ export const SET_IS_PASSWORD_RESET = 'user.SET_IS_PASSWORD_RESET';
 interface SetIsPasswordResetAction {
     payload: boolean;
     type: typeof SET_IS_PASSWORD_RESET;
+}
+
+export const SET_IS_PERSIST_LOADING = 'user.SET_IS_PERSIST_LOADING';
+
+interface SetIsPersistLoading {
+    payload: boolean;
+    type: typeof SET_IS_PERSIST_LOADING;
 }
 
 export const SET_IS_SETTINGS_LOADING = 'user.settings.SET_IS_SETTINGS_LOADING';
@@ -88,6 +108,20 @@ interface SetIsSettingsSavingAction {
     type: typeof SET_IS_SETTINGS_SAVING;
 }
 
+export const SET_LOGIN_ERROR = 'user.SET_LOGIN_ERROR';
+
+interface SetLoginErrorAction {
+    payload: ErrorObject;
+    type: typeof SET_LOGIN_ERROR;
+}
+
+export const SET_USER = 'user.settings.SET_USER';
+
+interface SetUserAction {
+    payload: User;
+    type: typeof SET_USER;
+}
+
 export const SET_USER_SETTINGS = 'user.settings.SET_USER_SETTINGS';
 
 interface SetUserSettingsAction {
@@ -95,16 +129,20 @@ interface SetUserSettingsAction {
     type: typeof SET_USER_SETTINGS;
 }
 
-export type UserSettingsActionTypes =
+export type UserActionTypes =
     | LogoutAction
     | ResetLoginErrorsAction
     | SetHasLoginErrorAction
     | SetIsAuthenticatedAction
     | SetIsAuthenticatingAction
     | SetIsLoadingAction
+    | SetIsLoggedInAction
     | SetIsPasswordRequestedAction
     | SetIsPasswordResetAction
+    | SetIsPersistLoading
     | SetIsSettingsLoadingAction
     | SetIsSettingsRefreshRequiredAction
     | SetIsSettingsSavingAction
+    | SetLoginErrorAction
+    | SetUserAction
     | SetUserSettingsAction;

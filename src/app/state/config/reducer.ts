@@ -1,6 +1,10 @@
 import { ConfigActionTypes, ConfigState, SET_CONFIG, SET_IS_LOADING } from './types';
 
 const initialState: ConfigState = {
+    authenticationUrl: '',
+    baseEntity: '',
+    baseUrl: '',
+    clientSecret: '',
     isLoading: true,
     reCaptchaSiteKey: '',
     replyAddressGrip: '',
