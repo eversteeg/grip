@@ -23,6 +23,9 @@ export const constructEntityUrl = (
     return parameters ? `${url}?${encodeQueryParameters(parameters)}` : url;
 };
 
+export const getBasicAuthenticationHeader = (password: string, username: string): string =>
+    `Basic ${btoa(`${username}:${password}`)}`;
+
 export const getBearerAuthenticationHeader = (token: string): string => `Bearer ${token}`;
 
 export const getOauthHeaders = (): { 'Content-Type': string } => ({

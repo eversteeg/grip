@@ -91,7 +91,6 @@ const VATOverview: FunctionComponent = () => {
     );
 
     const tableInstance = createTable<VAT>(columnsVats, vats, {
-        hiddenColumns: ['VATId'],
         sortBy,
     });
 

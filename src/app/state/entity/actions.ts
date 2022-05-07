@@ -1,22 +1,22 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
 import {
     basicErrorHandler,
+    setError,
+    setHasError,
     setHasInactivityTimeout,
-    setHasServerError,
     setHasUnauthorizedCall,
-    setServerError,
 } from '../error/actions';
 import {
     constructEntityUrl,
     encodeQueryParameters,
+    getBasicAuthenticationHeader,
     getBearerAuthenticationHeader,
     getHeaders,
-    getOauthHeaders,
 } from '../helpers';
 import { EntityActionTypes, EntityRequest, Method, SET_IS_TOKEN_BEING_REFRESHED } from './types';
 import { getTokenInformation, setLocalTokenStorage } from '../../utils/token';
+import { Error } from '../../../@types/error/Error';
 import moment from 'moment';
-import { ServerErrorObject } from '../error/types';
 import { ThunkResult } from '../store';
 import { TokenInformation } from '../../../@types/user/TokenInformation';
 
@@ -28,7 +28,7 @@ export const entityRequest =
         callbackError,
         callbackSuccess,
         entity,
-        isPublic = false,
+        isPublic = true, // this should be false, but couldn't get it to work properly right now
         method = 'GET',
         parameters,
     }: EntityRequest): ThunkResult =>
@@ -84,12 +84,20 @@ export const handleEntityRequest =
     }): ThunkResult<Promise<void>> =>
     (dispatch, getState): Promise<void> => {
         const {
-            config: { baseEntity, baseUrl },
+            config: { baseEntity, baseUrl, gripPassword, gripUsername },
             language: { locale },
         } = getState();
 
+        const { accessToken } = getTokenInformation();
+
         const fetchOptions: RequestInit = {
-            headers: getHeaders(locale),
+            headers: {
+                ...getHeaders(locale),
+                Authorization:
+                    accessToken && !isPublic
+                        ? getBearerAuthenticationHeader(accessToken)
+                        : getBasicAuthenticationHeader(gripPassword, gripUsername),
+            },
             method,
         };
 
@@ -114,18 +122,18 @@ export const handleEntityRequest =
             })
             .then((response) => {
                 dispatch(setHasUnauthorizedCall(false));
-                dispatch(setHasServerError(false));
-                dispatch(setServerError({} as ServerErrorObject));
+                dispatch(setHasError(false));
+                dispatch(setError({} as Error));
                 callbackSuccess(response);
             })
             .catch((error) => {
                 const status = (error as string).toString() === 'TypeError: Failed to fetch' ? 100 : 101;
-                dispatch(setHasServerError(true));
+                dispatch(setHasError(true));
 
                 dispatch(
-                    setServerError({
+                    setError({
+                        code: status,
                         description: error,
-                        status,
                     })
                 );
 
@@ -140,25 +148,42 @@ export const handleEntityRequest =
 export const refreshToken =
     (): ThunkResult<Promise<void>> =>
     (dispatch, getState): Promise<void> => {
-        const { authenticationUrl, baseEntity } = getState().config;
+        const { authenticationUrl, baseEntity, gripPassword, gripUsername } = getState().config;
         const id = getState().user.user.UserId || -1;
+        const { locale } = getState().language;
         dispatch(setIsTokenBeingRefreshed(true));
         dispatch(setHasInactivityTimeout(false));
 
-        refreshTokenPromise = fetch(`${authenticationUrl}/${baseEntity}/account/token/RefreshToken`, {
+        const fetchOptions: RequestInit = {
             body: encodeQueryParameters({
                 id,
                 refreshToken: getTokenInformation().refreshToken,
                 refreshTokenExpires: moment(getTokenInformation().expirationTimestamp).toISOString(),
             }),
-            headers: getOauthHeaders(),
+            headers: {
+                ...getHeaders(locale),
+                Authorization: getBasicAuthenticationHeader(gripPassword, gripUsername),
+            },
             method: 'POST',
-        })
-            .then((response) => response.json())
+        };
+
+        refreshTokenPromise = fetch(
+            constructEntityUrl(authenticationUrl, baseEntity, '/account/token/RefreshToken'),
+            fetchOptions
+        )
+            .then((response) => {
+                if (response.status === 420) {
+                    dispatch(setHasInactivityTimeout(true));
+                    dispatch(setIsTokenBeingRefreshed(false));
+                }
+
+                return response.json();
+            })
             .then((TokenObject: TokenInformation) => {
-                /* eslint-disable-next-line */
+                // eslint-disable-next-line no-console
                 console.log('**************** refreshed token:', TokenObject);
 
+                // Set token data
                 setLocalTokenStorage(TokenObject);
                 dispatch(setIsTokenBeingRefreshed(false));
             });

@@ -2,21 +2,17 @@ import {
     ErrorActionTypes,
     ErrorState,
     RESET,
-    SET_ENTITY_VIOLATION,
-    SET_HAS_ENTITY_VIOLATION,
+    SET_ERROR,
+    SET_HAS_ERROR,
     SET_HAS_INACTIVITY_TIMEOUT,
-    SET_HAS_SERVER_ERROR,
     SET_HAS_UNAUTHORIZED_CALL,
-    SET_SERVER_ERROR,
 } from './types';
 
 const initialState: ErrorState = {
-    entityViolation: {} as ErrorState['entityViolation'],
-    hasEntityViolation: false,
+    error: {} as ErrorState['error'],
+    hasError: false,
     hasInactivityTimeout: false,
-    hasServerError: false,
     hasUnauthorizedCall: false,
-    serverError: {} as ErrorState['serverError'],
 };
 
 export default (state = initialState, action: ErrorActionTypes): ErrorState => {
@@ -28,16 +24,16 @@ export default (state = initialState, action: ErrorActionTypes): ErrorState => {
             };
         /* eslint-enable padding-line-between-statements */
 
-        case SET_ENTITY_VIOLATION:
+        case SET_ERROR:
             return {
                 ...state,
-                entityViolation: action.payload,
+                error: action.payload,
             };
 
-        case SET_HAS_ENTITY_VIOLATION:
+        case SET_HAS_ERROR:
             return {
                 ...state,
-                hasEntityViolation: action.payload,
+                hasError: action.payload,
             };
 
         case SET_HAS_INACTIVITY_TIMEOUT:
@@ -46,22 +42,10 @@ export default (state = initialState, action: ErrorActionTypes): ErrorState => {
                 hasInactivityTimeout: action.payload,
             };
 
-        case SET_HAS_SERVER_ERROR:
-            return {
-                ...state,
-                hasServerError: action.payload,
-            };
-
         case SET_HAS_UNAUTHORIZED_CALL:
             return {
                 ...state,
                 hasUnauthorizedCall: action.payload,
-            };
-
-        case SET_SERVER_ERROR:
-            return {
-                ...state,
-                serverError: action.payload,
             };
 
         default:

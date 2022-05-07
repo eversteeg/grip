@@ -2,6 +2,7 @@
 import { SET_IS_ADD_VAT_ALLOWED, SET_IS_LOADING, SET_IS_VAT_REFRESH_REQUIRED, SET_VAT, VATActionTypes } from './types';
 import { APIResult } from '../../../@types/APIResult';
 import { entityRequest } from '../../state/entity/actions';
+import { setHasError } from '../../state/error/actions';
 import { ThunkResult } from '../../state/store';
 import { VAT } from '../../../@types/vat/VAT';
 
@@ -21,7 +22,9 @@ export const addVAT =
                 callbackError: (): void => {
                     dispatch(setIsLoading(false));
                 },
-                callbackSuccess: ({ hasError }: APIResult): void => {
+                callbackSuccess: ({ hasError, error }: APIResult): void => {
+                    console.log('error', error, hasError);
+                    dispatch(setHasError(hasError));
                     dispatch(setIsVATRefreshRequired(!hasError));
                     dispatch(setIsLoading(false));
                 },
@@ -41,8 +44,9 @@ export const deleteVAT =
                 callbackError: (): void => {
                     dispatch(setIsLoading(false));
                 },
-                callbackSuccess: ({ result }: APIResult): void => {
+                callbackSuccess: ({ hasError, result }: APIResult): void => {
                     const apiResult: APIDelete = result as APIDelete;
+                    dispatch(setHasError(hasError));
                     dispatch(setIsVATRefreshRequired(apiResult.isSuccess));
                     dispatch(setIsLoading(false));
                 },
@@ -65,8 +69,9 @@ export const getVAT =
                 callbackError: (): void => {
                     dispatch(setIsLoading(false));
                 },
-                callbackSuccess: ({ result }: APIResult): void => {
+                callbackSuccess: ({ hasError, result }: APIResult): void => {
                     const apiResult: VAT[] = result.data as VAT[];
+                    dispatch(setHasError(hasError));
                     dispatch(setVAT(apiResult));
                     dispatch(setIsAddVATAllowed(result.IsAddAllowed || false));
                     dispatch(setIsLoading(false));
@@ -88,6 +93,7 @@ export const updateVAT =
                     dispatch(setIsLoading(false));
                 },
                 callbackSuccess: ({ hasError }: APIResult): void => {
+                    dispatch(setHasError(hasError));
                     dispatch(setIsVATRefreshRequired(!hasError));
                     dispatch(setIsLoading(false));
                 },

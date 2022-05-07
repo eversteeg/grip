@@ -2,15 +2,12 @@
 import {
     ErrorActionTypes,
     RESET,
-    ServerErrorObject,
-    SET_ENTITY_VIOLATION,
-    SET_HAS_ENTITY_VIOLATION,
+    SET_ERROR,
+    SET_HAS_ERROR,
     SET_HAS_INACTIVITY_TIMEOUT,
-    SET_HAS_SERVER_ERROR,
     SET_HAS_UNAUTHORIZED_CALL,
-    SET_SERVER_ERROR,
 } from './types';
-import { EntityViolation } from '../../../@types/error/EntityViolation';
+import { Error } from '../../../@types/error/Error';
 // import { Method } from '../entity/types';
 import { ThunkResult } from '../store';
 
@@ -29,17 +26,12 @@ export const basicErrorHandler =
             // eslint-disable-next-line no-console
             console.log(entity, method);
 
-            let description = '';
-
-            // An exception needs to be made for LinkToPerson, because this situation needs to be handled differently
-            // description = `Error in entity call '${entity}' using method: '${method}'. Response status: ${status}`;
-            description += '';
-            dispatch(setHasServerError(true));
+            const description = '';
 
             dispatch(
-                setServerError({
+                setError({
+                    code: status,
                     description,
-                    status,
                 })
             );
 
@@ -54,39 +46,30 @@ export const basicErrorHandler =
 export const resetEntityViolations =
     (): ThunkResult =>
     (dispatch): void => {
-        void dispatch(setHasEntityViolation(false));
-        void dispatch(setEntityViolation({} as EntityViolation));
+        void dispatch(setHasError(false));
+        void dispatch(setError({} as Error));
     };
 
 export const resetErrors = (): ErrorActionTypes => ({
     type: RESET,
 });
 
-export const setEntityViolation = (entityViolation: EntityViolation): ErrorActionTypes => ({
-    payload: entityViolation,
-    type: SET_ENTITY_VIOLATION,
+export const setError = (error: Error): ErrorActionTypes => ({
+    payload: error,
+    type: SET_ERROR,
 });
 
-export const setHasEntityViolation = (hasEntityViolation: boolean): ErrorActionTypes => ({
-    payload: hasEntityViolation,
-    type: SET_HAS_ENTITY_VIOLATION,
+export const setHasError = (hasError: boolean): ErrorActionTypes => ({
+    payload: hasError,
+    type: SET_HAS_ERROR,
 });
 
 export const setHasInactivityTimeout = (hasInactivityTimeout: boolean): ErrorActionTypes => ({
     payload: hasInactivityTimeout,
     type: SET_HAS_INACTIVITY_TIMEOUT,
 });
-export const setHasServerError = (hasServerError: boolean): ErrorActionTypes => ({
-    payload: hasServerError,
-    type: SET_HAS_SERVER_ERROR,
-});
 
 export const setHasUnauthorizedCall = (hasUnauthorizedCall: boolean): ErrorActionTypes => ({
     payload: hasUnauthorizedCall,
     type: SET_HAS_UNAUTHORIZED_CALL,
-});
-
-export const setServerError = (serverError: ServerErrorObject): ErrorActionTypes => ({
-    payload: serverError,
-    type: SET_SERVER_ERROR,
 });

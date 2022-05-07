@@ -7,6 +7,8 @@ export interface Config {
     baseEntity: string;
     baseUrl: string;
     clientSecret: string;
+    gripPassword: string;
+    gripUsername: string;
     reCaptchaSiteKey: string;
     replyAddressGrip: string;
 }

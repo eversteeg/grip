@@ -26,7 +26,7 @@ const UpdateVATDialog: FunctionComponent<UpdateVATDialogProps> = ({ onClose, pre
 
     const onChangePercentage = useCallback((value: string) => {
         setPercentage(value);
-        setDescription(`${value} %`);
+        setDescription(`${toDecimalNumber(value) * 100} %`);
     }, []);
 
     useEffect(() => {

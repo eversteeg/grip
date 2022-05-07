@@ -5,6 +5,8 @@ const initialState: ConfigState = {
     baseEntity: '',
     baseUrl: '',
     clientSecret: '',
+    gripPassword: '',
+    gripUsername: '',
     isLoading: true,
     reCaptchaSiteKey: '',
     replyAddressGrip: '',

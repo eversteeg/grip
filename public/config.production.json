@@ -1,8 +1,8 @@
 {
     "baseEntity": "entity/common/clubweb",
     "baseUrl": "https://app-sportlinked.sportlink.com",
-    "navajoPassword": "kBTH-X-6QukI4kIy",
-    "navajoUsername": "sportlink-clubweb-public",
+    "gripPassword": "kBTH-X-6QukI4kIy",
+    "gripUsername": "infogrip@gmail.com",
     "reCaptchaSiteKey": "6Lf2MsgUAAAAAJQXQHYu82mbdzxdM9DTh8O8Pg75",
     "replyAddressSportlink": "info@sportlink.com"
 }

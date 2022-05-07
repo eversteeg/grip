@@ -1,14 +1,17 @@
 import 'moment/locale/fr';
 import 'moment/locale/nl';
 import { Dialect, Locales, Translations } from './state/language/types';
-import { getPersistUser, setUserSettings } from './state/user/actions';
+import { getPersistUser, logoutUser, setUserSettings } from './state/user/actions';
 import { isEmpty, themeCyrillic, themeCyrillicDark, Tooltip } from 'faralley-ui-kit';
 import { isTheme, THEMES } from './globals/themes';
-import React, { FunctionComponent, useEffect } from 'react';
+import React, { FunctionComponent, useCallback, useEffect } from 'react';
 import { setDialect, setIsLocaleChanged, setLocale } from './state/language/actions';
+import { setHasError, setHasInactivityTimeout, setHasUnauthorizedCall } from './state/error/actions';
 import { shallowEqual, useDispatch } from 'react-redux';
 import { APP_TITLE } from './globals/constants';
 import { BrowserRouter } from 'react-router-dom';
+import DialogError from './components/molecules/dialogs/dialogError/DialogError';
+import DialogInactivity from './components/molecules/dialogs/dialogInactivity/DialogInactivity';
 import { getConfig } from './state/config/actions';
 import { getTranslationFromStorage } from './utils/translationFunctions';
 import GlobalStyle from './styles/GlobalStyle';
@@ -41,6 +44,17 @@ const App: FunctionComponent = () => {
     const locale = useSelector(({ language }) => language.locale);
     const { dialect, translations } = useSelector(({ language }) => language, shallowEqual);
     const settings = useSelector(({ user }) => user.settings);
+    const { hasInactivityTimeout, hasError, hasUnauthorizedCall } = useSelector(({ error }) => error, shallowEqual);
+
+    const onDialogErrorConfirmCallback = useCallback(() => {
+        dispatch(setHasError(false));
+        dispatch(setHasUnauthorizedCall(false));
+    }, []);
+
+    const onDialogInactivityConfirmCallback = useCallback(() => {
+        dispatch(logoutUser());
+        dispatch(setHasInactivityTimeout(false));
+    }, []);
 
     useEffect(() => {
         dispatch(getConfig());
@@ -122,6 +136,16 @@ const App: FunctionComponent = () => {
                 <ScrollToTop />
                 {!isConfigLoading && !isLanguageLoading && !isPersistCodeTableLoading && (
                     <>
+                        <DialogError
+                            hasUnauthorizedCall={hasUnauthorizedCall}
+                            isVisible={hasError || hasUnauthorizedCall}
+                            onConfirm={onDialogErrorConfirmCallback}
+                        />
+                        {/* This is delibaretly a different dialog, because it isn't the same as a global error */}
+                        <DialogInactivity
+                            isVisible={hasInactivityTimeout}
+                            onConfirm={onDialogInactivityConfirmCallback}
+                        />
                         {/* @TODO: think of something to make this easily adjustable where necessary. Default should still be the ui-kit value */}
                         <Tooltip delay={2000} />
                         <Routes />
