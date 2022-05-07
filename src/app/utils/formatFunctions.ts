@@ -16,3 +16,5 @@ export const formatZipCode = (zipcode: string | null): string => {
 
     return zipcode || EMPTY_DISPLAY_VALUE_SELECTION;
 };
+
+export const toDecimalNumber = (value: string): number => Number.parseFloat(value.replace(',', '.'));

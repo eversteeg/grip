@@ -1,6 +1,7 @@
 import { Error } from './error/Error';
 
-interface APIData {
+export interface APIData {
+    IsAddAllowed?: boolean;
     data: unknown;
 }
 

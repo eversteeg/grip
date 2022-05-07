@@ -29,11 +29,13 @@ export interface Translations {
     AddFile: string;
     AddName: string;
     AddNameOptional: string;
+    AddVAT: string;
     AppSettings: string;
     BackToHome: string;
     Cancel: string;
     Change: string;
     ChangePassword: string;
+    ChangeVAT: string;
     ChooseAnotherFile: string;
     ChooseFile: string;
     CloseWindow: string;
@@ -43,6 +45,9 @@ export interface Translations {
     DateFormatLong: string;
     DateFormatTime: string;
     DateFormatXLong: string;
+    Delete: string;
+    DeleteHistoryData: string;
+    Description: string;
     DragFile: string;
     Email: string;
     Error404: string;
@@ -77,6 +82,7 @@ export interface Translations {
     Password: string;
     PasswordReset: string;
     PasswordResetText: string;
+    Percentage: string;
     RememberLoginData: string;
     ResetYourPassword: string;
     ResetYourPasswordText: string;
@@ -103,6 +109,7 @@ export interface Translations {
     UploadingFiles: string;
     UseDarkTheme: string;
     VAT: string;
+    VATs: string;
     Version: string;
     WrongExtension: string;
     Yes: string;

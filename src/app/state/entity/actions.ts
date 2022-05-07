@@ -57,7 +57,7 @@ export const entityRequest =
                     dispatchEntityRequest(resolve);
                 });
             } else if (isPublic) {
-                dispatchEntityRequest(resolve);
+                void dispatchEntityRequest(resolve);
             } else {
                 void dispatch(refreshToken()).then(() => {
                     const { hasInactivityTimeout } = getState().error;

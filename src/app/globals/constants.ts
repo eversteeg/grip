@@ -25,4 +25,5 @@ export const maxInputWidth = {
     short: 32,
     streetName: 125,
     xlong: 1024,
+    xshort: 20,
 };

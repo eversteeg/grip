@@ -13,7 +13,7 @@ import { ROUTES } from './routeDefinitions';
 import SettingsPage from '../user/settings/SettingsPage';
 import { Translations } from '../state/language/types';
 import UnsupportedAlert from '../user/login/unsupportedAlert/UnsupportedAlert';
-import VATOverview from '../components/vat/VATOverview';
+import VATOverview from '../vat/VATOverview';
 
 export const getPrivateRoutes = (): {
     privatePaths: string[];

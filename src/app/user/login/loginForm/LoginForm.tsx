@@ -79,12 +79,6 @@ const LoginForm: FunctionComponent = () => {
         [isLoginPossible]
     );
 
-    useEffect(() => {
-        if (reCaptchaToken) {
-            authenticateUserCallback();
-        }
-    }, [reCaptchaToken]);
-
     // Make sure this item is removed on loading
     useEffect(() => {
         localStorage.removeItem(LOCAL_STORAGE.resendActivationMail);

@@ -11,6 +11,7 @@ import modal from './modal/reducer';
 import sharedNavigationInfo from './shared/navigationInfo/reducer';
 import sidePanel from './sidepanel/reducer';
 import user from './user/reducer';
+import vat from '../vat/_state/reducer';
 
 const rootReducer = combineReducers({
     config,
@@ -23,6 +24,7 @@ const rootReducer = combineReducers({
     sharedNavigationInfo,
     sidePanel,
     user,
+    vat,
 });
 
 const logger = createLogger({
