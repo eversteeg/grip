@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
+import { backendRequest, refreshToken } from '../entity/actions';
 import { decryptData, encryptData } from '../../utils/crypting';
 import { deleteLocalTokenStorage, isTokenValid, setLocalTokenStorage } from '../../utils/token';
-import { entityRequest, refreshToken } from '../entity/actions';
+import { isEmpty, Locale, toNumber } from 'faralley-ui-kit';
 import { LOCAL_STORAGE, SESSION_STORAGE } from '../../globals/storage';
 import {
     LOG_OUT,
@@ -24,15 +25,23 @@ import {
 } from './types';
 import { APIResult } from '../../../@types/APIResult';
 import { ErrorObject } from '../../../@types/error/ErrorObject';
-import { isEmpty } from 'faralley-ui-kit';
 import { SYSTEM_KEY } from '../../globals/constants';
+import { THEMES } from '../../globals/themes';
 import { ThunkResult } from '../store';
 import { TokenInformation } from '../../../@types/user/TokenInformation';
 import { User } from '../../../@types/user/User';
+import { UserSettings } from '../../../@types/user/UserSettings';
 
 interface APIResultAuthenticate {
     TokenInformation: TokenInformation;
     User: User;
+}
+
+interface APIResultUserSettings {
+    objectname: string;
+    objecttype: string;
+    propertyname: string;
+    propertyvalue: string;
 }
 
 export const authenticateUser =
@@ -44,7 +53,7 @@ export const authenticateUser =
         dispatch(setHasLoginError(false));
 
         dispatch(
-            entityRequest({
+            backendRequest({
                 body: {
                     password,
                     username,
@@ -62,7 +71,7 @@ export const authenticateUser =
                                 ? {
                                       description: error.description,
                                       descriptionKey: 'ErrorUnknown',
-                                      id: error.code,
+                                      id: toNumber(error.code),
                                   }
                                 : ({} as ErrorObject)
                         )
@@ -93,7 +102,7 @@ export const changePassword =
         dispatch(setIsLoading(true));
 
         // void dispatch(
-        //     entityRequest({
+        //     backendRequest({
         //         body: {
         //             password,
         //             token,
@@ -115,22 +124,55 @@ export const changePassword =
 
 export const getUserSettings =
     (): ThunkResult =>
-    (dispatch): void => {
+    (dispatch, getState): void => {
+        const userId = getState().user.user.UserId;
         dispatch(setIsSettingsLoading(true));
         dispatch(setIsSettingRefreshRequired(false));
 
-        // void dispatch(
-        //     entityRequest({
-        //         callbackError: (): void => {
-        //             dispatch(setIsSettingsLoading(false));
-        //         },
-        //         callbackSuccess: (response: UserState['settings']): void => {
-        //             dispatch(setUserSettings(response));
-        //             dispatch(setIsSettingsLoading(false));
-        //         },
-        //         entity: 'user/settings/UserSettings',
-        //     })
-        // );
+        void dispatch(
+            backendRequest({
+                callbackError: (): void => {
+                    dispatch(setIsSettingsLoading(false));
+                },
+                callbackSuccess: ({ result }: APIResult): void => {
+                    const apiResult: APIResultUserSettings[] = result.data as APIResultUserSettings[];
+                    const theme = localStorage.getItem(LOCAL_STORAGE.theme) || THEMES.cyrillic;
+                    // Take the values form the list
+                    let userSettings: UserSettings = {} as UserSettings;
+                    let appTheme: string = theme;
+                    let language: Locale = 'NL' as Locale;
+
+                    apiResult.forEach((item) => {
+                        if (
+                            item.objectname === 'DEFAULTVALUE' &&
+                            item.objecttype === 'APPLICATION' &&
+                            item.propertyname === 'LANGUAGE'
+                        ) {
+                            language = item.propertyvalue as Locale;
+                        }
+
+                        if (
+                            item.objectname === 'DEFAULTVALUE' &&
+                            item.objecttype === 'APPLICATION' &&
+                            item.propertyname === 'THEME'
+                        ) {
+                            appTheme = item.propertyvalue;
+                        }
+                    });
+
+                    userSettings = {
+                        AppTheme: appTheme,
+                        IsSuccess: true,
+                        Language: language,
+                    };
+
+                    dispatch(setUserSettings(userSettings));
+                    dispatch(setIsSettingsLoading(false));
+                },
+                entity: 'account/UserSettings',
+                parameters: { userId },
+            })
+        );
     };
 
 export const loginUser =
@@ -161,7 +203,7 @@ export const logoutUser =
 
         const logout = (): void => {
             void dispatch(
-                entityRequest({
+                backendRequest({
                     body: { userId },
                     callbackError: callbackResult,
                     callbackSuccess: callbackResult,
@@ -197,7 +239,7 @@ export const requestPassword =
         dispatch(setIsLoading(false));
 
         // void dispatch(
-        //     entityRequest({
+        //     backendRequest({
         //         callbackError: (error: Error): void => {
         //             // @TODO: add error handling
         //             // eslint-disable-next-line
@@ -218,28 +260,27 @@ export const requestPassword =
 
 export const updateUserSettings =
     (userSettings: UserState['settings']): ThunkResult =>
-    (dispatch): void => {
+    (dispatch, getState): void => {
+        const userId = getState().user.user.UserId;
         dispatch(setIsSettingsSaving(true));
 
-        // eslint-disable-next-line no-console
-        console.log(userSettings);
-
-        // void dispatch(
-        //     entityRequest({
-        //         body: {
-        //             ...userSettings,
-        //         },
-        //         callbackError: (): void => {
-        //             dispatch(setIsSettingsSaving(false));
-        //         },
-        //         callbackSuccess: (response: UserSettingsState['settings']): void => {
-        //             dispatch(setIsSettingRefreshRequired(response.IsSuccess));
-        //             dispatch(setIsSettingsSaving(false));
-        //         },
-        //         entity: 'user/settings/UserSettings',
-        //         method: 'PUT',
-        //     })
-        // );
+        void dispatch(
+            backendRequest({
+                body: {
+                    ...userSettings,
+                    userId,
+                },
+                callbackError: (): void => {
+                    dispatch(setIsSettingsSaving(false));
+                },
+                callbackSuccess: ({ hasError }: APIResult): void => {
+                    dispatch(setIsSettingRefreshRequired(!hasError));
+                    dispatch(setIsSettingsSaving(false));
+                },
+                entity: 'account/UpdateUserSettings',
+                method: 'PUT',
+            })
+        );
     };
 
 export const deletePersistUserSession = (): void => {

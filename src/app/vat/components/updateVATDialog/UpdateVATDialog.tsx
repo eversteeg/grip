@@ -1,13 +1,17 @@
-import { ButtonSize, ButtonVariant, IconType, Input, InputType } from 'faralley-ui-kit';
+import { ButtonSize, ButtonVariant, IconType, Input, InputType, isEmpty } from 'faralley-ui-kit';
 import React, { ChangeEvent, FunctionComponent, useCallback, useEffect, useState } from 'react';
 import { DialogFormElementWrapper } from '../../../components/atoms/dialogFormat/DialogFormat.sc';
+import { getViolationTexts } from '../../../utils/violationFunctions';
 import LocalizedString from '../../../components/atoms/localizedString/LocalizedString';
 import { maxInputWidth } from '../../../globals/constants';
+import { resetAllErrors } from '../../../state/error/actions';
 import { toDecimalNumber } from '../../../utils/formatFunctions';
 import { updateDialogProperties } from '../../../state/dialog/actions';
 import { updateVAT } from '../../_state/actions';
 import { useDispatch } from 'react-redux';
+import useSelector from '../../../state/useSelector';
 import { VAT } from '../../../../@types/vat/VAT';
+import { ViolationList } from '../../../components/atoms/violationList/ViolationList.sc';
 
 export interface UpdateVATDialogProps {
     onClose: () => void;
@@ -18,16 +22,32 @@ const UpdateVATDialog: FunctionComponent<UpdateVATDialogProps> = ({ onClose, pre
     const dispatch = useDispatch();
     const [description, setDescription] = useState(previousVAT.Description);
     const [percentage, setPercentage] = useState(previousVAT.Percentage.toString());
+    const [isCloseDialogAllowed, setIsCloseDialogAllowed] = useState(false);
+    const hasError = useSelector(({ error }) => error.hasError);
+    const violations = useSelector(({ error }) => error.error);
+    const isSaving = useSelector(({ vat }) => vat.isSaving);
+
+    const resetViolations = useCallback(() => {
+        setIsCloseDialogAllowed(false);
+        dispatch(resetAllErrors());
+    }, []);
 
     const onConfirmEditCallback = useCallback(() => {
         dispatch(updateVAT(previousVAT.VATId, toDecimalNumber(percentage), description));
-        onClose();
+        setIsCloseDialogAllowed(true);
     }, [description, previousVAT, percentage]);
 
     const onChangePercentage = useCallback((value: string) => {
         setPercentage(value);
         setDescription(`${toDecimalNumber(value) * 100} %`);
     }, []);
+
+    // Check if closing is allowed
+    useEffect(() => {
+        if (!hasError && !isSaving && isCloseDialogAllowed) {
+            onClose();
+        }
+    }, [hasError, isSaving]);
 
     useEffect(() => {
         dispatch(
@@ -36,6 +56,7 @@ const UpdateVATDialog: FunctionComponent<UpdateVATDialogProps> = ({ onClose, pre
                     {
                         children: <LocalizedString value="Cancel" />,
                         iconType: IconType.CROSS,
+                        isDisabled: isSaving,
                         onClick: onClose,
                         size: ButtonSize.SMALL,
                         variant: ButtonVariant.TEXT_ONLY,
@@ -43,6 +64,8 @@ const UpdateVATDialog: FunctionComponent<UpdateVATDialogProps> = ({ onClose, pre
                     {
                         children: <LocalizedString value="Save" />,
                         iconType: IconType.PLUS,
+                        isDisabled: isEmpty(description) || isEmpty(percentage),
+                        isLoading: isSaving,
                         onClick: onConfirmEditCallback,
                         size: ButtonSize.SMALL,
                     },
@@ -51,7 +74,7 @@ const UpdateVATDialog: FunctionComponent<UpdateVATDialogProps> = ({ onClose, pre
                 title: <LocalizedString value="ChangeVAT" />,
             })
         );
-    }, [onClose, onConfirmEditCallback]);
+    }, [onClose, onConfirmEditCallback, description, isSaving, percentage]);
 
     return (
         <>
@@ -61,7 +84,10 @@ const UpdateVATDialog: FunctionComponent<UpdateVATDialogProps> = ({ onClose, pre
                     label={<LocalizedString value="Percentage" />}
                     maxLength={5}
                     name="percentage"
-                    onChange={(event: ChangeEvent<HTMLInputElement>) => onChangePercentage(event.currentTarget.value)}
+                    onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                        onChangePercentage(event.currentTarget.value);
+                        resetViolations();
+                    }}
                     type={InputType.CURRENCY}
                     value={percentage}
                 />
@@ -71,10 +97,17 @@ const UpdateVATDialog: FunctionComponent<UpdateVATDialogProps> = ({ onClose, pre
                     label={<LocalizedString value="Description" />}
                     maxLength={maxInputWidth.xshort}
                     name="description"
-                    onChange={(event: ChangeEvent<HTMLInputElement>) => setDescription(event.currentTarget.value)}
+                    onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                        setDescription(event.currentTarget.value);
+                        resetViolations();
+                    }}
                     value={description}
                 />
             </DialogFormElementWrapper>
+
+            {violations && (
+                <ViolationList dangerouslySetInnerHTML={{ __html: getViolationTexts(violations).join() }} isError />
+            )}
         </>
     );
 };

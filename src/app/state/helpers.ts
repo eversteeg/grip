@@ -32,8 +32,9 @@ export const getOauthHeaders = (): { 'Content-Type': string } => ({
     'Content-Type': 'application/x-www-form-urlencoded',
 });
 
-export const getHeaders = (locale: string): { [key: string]: string } => ({
+export const getHeaders = (username: string, locale: string): { [key: string]: string } => ({
     Accept: 'application/json',
     'Content-Type': 'application/json; charset=utf-8',
     'X-GRIP-LOCALE': locale,
+    'X-GRIP-USERNAME': username,
 });

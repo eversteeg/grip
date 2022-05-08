@@ -44,7 +44,11 @@ const App: FunctionComponent = () => {
     const locale = useSelector(({ language }) => language.locale);
     const { dialect, translations } = useSelector(({ language }) => language, shallowEqual);
     const settings = useSelector(({ user }) => user.settings);
-    const { hasInactivityTimeout, hasError, hasUnauthorizedCall } = useSelector(({ error }) => error, shallowEqual);
+
+    const { hasInactivityTimeout, hasServerError, hasUnauthorizedCall } = useSelector(
+        ({ error }) => error,
+        shallowEqual
+    );
 
     const onDialogErrorConfirmCallback = useCallback(() => {
         dispatch(setHasError(false));
@@ -138,7 +142,7 @@ const App: FunctionComponent = () => {
                     <>
                         <DialogError
                             hasUnauthorizedCall={hasUnauthorizedCall}
-                            isVisible={hasError || hasUnauthorizedCall}
+                            isVisible={hasServerError || hasUnauthorizedCall}
                             onConfirm={onDialogErrorConfirmCallback}
                         />
                         {/* This is delibaretly a different dialog, because it isn't the same as a global error */}

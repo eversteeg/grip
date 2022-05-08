@@ -4,6 +4,7 @@ export interface ErrorState {
     error: Error;
     hasError: boolean;
     hasInactivityTimeout: boolean;
+    hasServerError: boolean;
     hasUnauthorizedCall: boolean;
 }
 
@@ -39,6 +40,13 @@ interface SetHasInactivityTimeout {
     type: typeof SET_HAS_INACTIVITY_TIMEOUT;
 }
 
+export const SET_HAS_SERVER_ERROR = 'error.SET_HAS_SERVER_ERROR';
+
+interface setHasServerErrorAction {
+    payload: boolean;
+    type: typeof SET_HAS_SERVER_ERROR;
+}
+
 export const SET_HAS_UNAUTHORIZED_CALL = 'error.SET_HAS_UNAUTHORIZED_CALL';
 
 interface SetHasUnauthorizedCallAction {
@@ -51,4 +59,5 @@ export type ErrorActionTypes =
     | SetErrorAction
     | setHasErrorAction
     | SetHasInactivityTimeout
+    | setHasServerErrorAction
     | SetHasUnauthorizedCallAction;

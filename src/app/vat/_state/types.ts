@@ -3,6 +3,7 @@ import { VAT } from '../../../@types/vat/VAT';
 export interface VATState {
     isAddVATAllowed: boolean;
     isLoading: boolean;
+    isSaving: boolean;
     isVATRefreshRequired: boolean;
     vat: VAT[];
 }
@@ -34,6 +35,13 @@ interface SetIsLoadingAction {
     type: typeof SET_IS_LOADING;
 }
 
+export const SET_IS_SAVING = 'vat.SET_IS_SAVING';
+
+interface SetIsSavingAction {
+    payload: boolean;
+    type: typeof SET_IS_SAVING;
+}
+
 export const SET_IS_VAT_REFRESH_REQUIRED = 'vat.SET_IS_VAT_REFRESH_REQUIRED';
 
 interface SetIsVATRefreshRequiredAction {
@@ -45,5 +53,6 @@ export type VATActionTypes =
     | ResetVATAction
     | SetIsAddVATAllowedAction
     | SetIsLoadingAction
+    | SetIsSavingAction
     | SetIsVATRefreshRequiredAction
     | SetVATAction;

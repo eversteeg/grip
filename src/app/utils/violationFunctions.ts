@@ -1,6 +1,5 @@
-import { EntityViolation } from '../../@types/error/EntityViolation';
+import { Error } from '../../@types/error/Error';
 
-export const getViolationTexts = (violations: EntityViolation['Violations']): string[] =>
-    Object.values(violations).map((violation) => violation);
+export const getViolationTexts = (violations: Error): string[] => [violations.description];
 
 export default getViolationTexts;

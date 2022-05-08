@@ -14,15 +14,17 @@ import {
     getHeaders,
 } from '../helpers';
 import { EntityActionTypes, EntityRequest, Method, SET_IS_TOKEN_BEING_REFRESHED } from './types';
+import { Error, ErrorType } from '../../../@types/error/Error';
 import { getTokenInformation, setLocalTokenStorage } from '../../utils/token';
-import { Error } from '../../../@types/error/Error';
+import { APIResult } from '../../../@types/APIResult';
+import { isEmpty } from 'faralley-ui-kit';
 import moment from 'moment';
 import { ThunkResult } from '../store';
 import { TokenInformation } from '../../../@types/user/TokenInformation';
 
 let refreshTokenPromise: Promise<void>;
 
-export const entityRequest =
+export const backendRequest =
     ({
         body,
         callbackError,
@@ -35,9 +37,9 @@ export const entityRequest =
     (dispatch, getState): Promise<void> => {
         const { isTokenBeingRefreshed } = getState().entity;
 
-        const dispatchEntityRequest = (resolve: () => void): void => {
+        const dispatchRequest = (resolve: () => void): void => {
             void dispatch(
-                handleEntityRequest({
+                handleRequest({
                     body,
                     callbackError,
                     callbackSuccess,
@@ -54,23 +56,23 @@ export const entityRequest =
         return new Promise((resolve) => {
             if (isTokenBeingRefreshed) {
                 void refreshTokenPromise.then(() => {
-                    dispatchEntityRequest(resolve);
+                    dispatchRequest(resolve);
                 });
             } else if (isPublic) {
-                void dispatchEntityRequest(resolve);
+                void dispatchRequest(resolve);
             } else {
                 void dispatch(refreshToken()).then(() => {
                     const { hasInactivityTimeout } = getState().error;
 
                     if (!hasInactivityTimeout) {
-                        dispatchEntityRequest(resolve);
+                        dispatchRequest(resolve);
                     }
                 });
             }
         });
     };
 
-export const handleEntityRequest =
+export const handleRequest =
     ({
         body,
         callbackError,
@@ -86,13 +88,16 @@ export const handleEntityRequest =
         const {
             config: { baseEntity, baseUrl, gripPassword, gripUsername },
             language: { locale },
+            user: {
+                user: { Username },
+            },
         } = getState();
 
         const { accessToken } = getTokenInformation();
 
         const fetchOptions: RequestInit = {
             headers: {
-                ...getHeaders(locale),
+                ...getHeaders(Username, locale),
                 Authorization:
                     accessToken && !isPublic
                         ? getBearerAuthenticationHeader(accessToken)
@@ -121,9 +126,15 @@ export const handleEntityRequest =
                 return response.json();
             })
             .then((response) => {
+                if (!isEmpty((response as APIResult).error)) {
+                    dispatch(setError((response as APIResult).error));
+                    dispatch(setHasError(true));
+                } else {
+                    dispatch(setError({} as Error));
+                    dispatch(setHasError(false));
+                }
+
                 dispatch(setHasUnauthorizedCall(false));
-                dispatch(setHasError(false));
-                dispatch(setError({} as Error));
                 callbackSuccess(response);
             })
             .catch((error) => {
@@ -132,8 +143,9 @@ export const handleEntityRequest =
 
                 dispatch(
                     setError({
-                        code: status,
+                        code: status.toString(),
                         description: error,
+                        type: ErrorType.SERVER,
                     })
                 );
 
@@ -150,6 +162,7 @@ export const refreshToken =
     (dispatch, getState): Promise<void> => {
         const { authenticationUrl, baseEntity, gripPassword, gripUsername } = getState().config;
         const id = getState().user.user.UserId || -1;
+        const { Username } = getState().user.user;
         const { locale } = getState().language;
         dispatch(setIsTokenBeingRefreshed(true));
         dispatch(setHasInactivityTimeout(false));
@@ -161,7 +174,7 @@ export const refreshToken =
                 refreshTokenExpires: moment(getTokenInformation().expirationTimestamp).toISOString(),
             }),
             headers: {
-                ...getHeaders(locale),
+                ...getHeaders(Username, locale),
                 Authorization: getBasicAuthenticationHeader(gripPassword, gripUsername),
             },
             method: 'POST',

@@ -1,8 +1,14 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
-import { SET_IS_ADD_VAT_ALLOWED, SET_IS_LOADING, SET_IS_VAT_REFRESH_REQUIRED, SET_VAT, VATActionTypes } from './types';
+import {
+    SET_IS_ADD_VAT_ALLOWED,
+    SET_IS_LOADING,
+    SET_IS_SAVING,
+    SET_IS_VAT_REFRESH_REQUIRED,
+    SET_VAT,
+    VATActionTypes,
+} from './types';
 import { APIResult } from '../../../@types/APIResult';
-import { entityRequest } from '../../state/entity/actions';
-import { setHasError } from '../../state/error/actions';
+import { backendRequest } from '../../state/entity/actions';
 import { ThunkResult } from '../../state/store';
 import { VAT } from '../../../@types/vat/VAT';
 
@@ -14,19 +20,17 @@ interface APIDelete {
 export const addVAT =
     (percentage: number, description: string): ThunkResult =>
     (dispatch): void => {
-        dispatch(setIsLoading(true));
+        dispatch(setIsSaving(true));
 
         dispatch(
-            entityRequest({
+            backendRequest({
                 body: { description, percentage },
                 callbackError: (): void => {
-                    dispatch(setIsLoading(false));
+                    dispatch(setIsSaving(false));
                 },
-                callbackSuccess: ({ hasError, error }: APIResult): void => {
-                    console.log('error', error, hasError);
-                    dispatch(setHasError(hasError));
+                callbackSuccess: ({ hasError }: APIResult): void => {
                     dispatch(setIsVATRefreshRequired(!hasError));
-                    dispatch(setIsLoading(false));
+                    dispatch(setIsSaving(false));
                 },
                 entity: 'vat/AddVAT',
                 method: 'POST',
@@ -37,18 +41,17 @@ export const addVAT =
 export const deleteVAT =
     (VATId: number): ThunkResult =>
     (dispatch): void => {
-        dispatch(setIsLoading(true));
+        dispatch(setIsSaving(true));
 
         dispatch(
-            entityRequest({
+            backendRequest({
                 callbackError: (): void => {
-                    dispatch(setIsLoading(false));
+                    dispatch(setIsSaving(false));
                 },
-                callbackSuccess: ({ hasError, result }: APIResult): void => {
+                callbackSuccess: ({ result }: APIResult): void => {
                     const apiResult: APIDelete = result as APIDelete;
-                    dispatch(setHasError(hasError));
                     dispatch(setIsVATRefreshRequired(apiResult.isSuccess));
-                    dispatch(setIsLoading(false));
+                    dispatch(setIsSaving(false));
                 },
                 entity: 'vat/DeleteVAT',
                 method: 'DELETE',
@@ -65,13 +68,12 @@ export const getVAT =
         dispatch(setIsVATRefreshRequired(false));
 
         dispatch(
-            entityRequest({
+            backendRequest({
                 callbackError: (): void => {
                     dispatch(setIsLoading(false));
                 },
-                callbackSuccess: ({ hasError, result }: APIResult): void => {
+                callbackSuccess: ({ result }: APIResult): void => {
                     const apiResult: VAT[] = result.data as VAT[];
-                    dispatch(setHasError(hasError));
                     dispatch(setVAT(apiResult));
                     dispatch(setIsAddVATAllowed(result.IsAddAllowed || false));
                     dispatch(setIsLoading(false));
@@ -84,18 +86,17 @@ export const getVAT =
 export const updateVAT =
     (vatid: number, percentage: number, description: string): ThunkResult =>
     (dispatch): void => {
-        dispatch(setIsLoading(true));
+        dispatch(setIsSaving(true));
 
         dispatch(
-            entityRequest({
+            backendRequest({
                 body: { description, percentage, vatid },
                 callbackError: (): void => {
-                    dispatch(setIsLoading(false));
+                    dispatch(setIsSaving(false));
                 },
                 callbackSuccess: ({ hasError }: APIResult): void => {
-                    dispatch(setHasError(hasError));
                     dispatch(setIsVATRefreshRequired(!hasError));
-                    dispatch(setIsLoading(false));
+                    dispatch(setIsSaving(false));
                 },
                 entity: 'vat/UpdateVAT',
                 method: 'PUT',
@@ -111,6 +112,11 @@ export const setIsAddVATAllowed = (isAllowed: boolean): VATActionTypes => ({
 export const setIsLoading = (isLoading: boolean): VATActionTypes => ({
     payload: isLoading,
     type: SET_IS_LOADING,
+});
+
+export const setIsSaving = (isSaving: boolean): VATActionTypes => ({
+    payload: isSaving,
+    type: SET_IS_SAVING,
 });
 
 export const setIsVATRefreshRequired = (isRefreshRequired: boolean): VATActionTypes => ({

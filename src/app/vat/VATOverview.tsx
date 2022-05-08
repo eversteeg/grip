@@ -9,6 +9,7 @@ import { shallowEqual, useDispatch } from 'react-redux';
 import AddVATDialog from './components/addVATDialog/AddVATDialog';
 import { createTable } from '../utils/tableFunctions';
 import LocalizedString from '../components/atoms/localizedString/LocalizedString';
+import { resetAllErrors } from '../state/error/actions';
 import Table from '../components/organisms/table/Table';
 import { tableColumnsVats } from './tableColumnsVats';
 import { Row as TableRow } from 'react-table';
@@ -112,7 +113,7 @@ const VATOverview: FunctionComponent = () => {
                         variant: ButtonVariant.TEXT_ONLY,
                     },
                 ],
-                iconType: IconType.USERDOUBLE,
+                iconType: IconType.AWARD,
             })
         );
     }, [selectedVAT]);
@@ -129,7 +130,7 @@ const VATOverview: FunctionComponent = () => {
                         variant: ButtonVariant.TEXT_ONLY,
                     },
                 ],
-                iconType: IconType.USERDOUBLE,
+                iconType: IconType.AWARD,
             })
         );
     }, []);
@@ -154,6 +155,8 @@ const VATOverview: FunctionComponent = () => {
 
     useEffect(() => {
         if (isDialogVisible) {
+            dispatch(resetAllErrors());
+
             if (editMode === EDIT_MODE.EDIT) {
                 openEditVATDialog();
             } else {

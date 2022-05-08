@@ -16,7 +16,7 @@ import {
     UpdateDialogProps,
 } from './types';
 import { DocumentToUpload } from '../../../@types/document/DocumentToUpload';
-// import { entityRequest } from '../entity/actions';
+// import { backendRequest } from '../entity/actions';
 import { ThunkResult } from '../store';
 
 // Add other types if required
@@ -73,7 +73,7 @@ export const uploadDocuments =
             console.log(Document);
             void null;
             //     void dispatch(
-            //         entityRequest({
+            //         backendRequest({
             //             body: Document,
             //             callbackError: (error) => {
             //                 dispatch(

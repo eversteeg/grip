@@ -6,6 +6,7 @@ import {
     EditableInformationProps,
     IconType,
     ImmutableDataProps,
+    Locale,
     SelectionControl,
     SelectionControlType,
 } from 'faralley-ui-kit';
@@ -29,9 +30,16 @@ const AppSettings: FunctionComponent = () => {
 
     const setThemeCallback = useCallback(
         (event: ChangeEvent<HTMLInputElement> | MouseEvent<HTMLButtonElement>) => {
-            const newTheme = (event.currentTarget as HTMLInputElement).checked ? THEMES.dark : THEMES.basic;
+            const newTheme = (event.currentTarget as HTMLInputElement).checked ? THEMES.cyrillicdark : THEMES.cyrillic;
             localStorage.setItem(LOCAL_STORAGE.theme, newTheme);
             dispatch(updateUserSettings({ ...settings, AppTheme: newTheme }));
+        },
+        [settings]
+    );
+
+    const setLanguageCallback = useCallback(
+        (language: Locale): void => {
+            dispatch(updateUserSettings({ ...settings, Language: language }));
         },
         [settings]
     );
@@ -58,7 +66,9 @@ const AppSettings: FunctionComponent = () => {
                 component: EditableDataComponent.IMMUTABLE,
                 label: <LocalizedString value="Language" />,
                 name: 'Language',
-                value: <DropdownLanguage hasIcon={false} />,
+                value: (
+                    <DropdownLanguage hasIcon={false} onChange={(language: Locale) => setLanguageCallback(language)} />
+                ),
             } as ImmutableDataProps,
             {
                 component: EditableDataComponent.IMMUTABLE,
@@ -66,7 +76,7 @@ const AppSettings: FunctionComponent = () => {
                 name: 'UseDarkTheme',
                 value: (
                     <SelectionControl
-                        isChecked={settings.AppTheme === THEMES.dark}
+                        isChecked={settings.AppTheme === THEMES.cyrillicdark}
                         label={''}
                         name="use-dark-theme"
                         onChange={setThemeCallback}

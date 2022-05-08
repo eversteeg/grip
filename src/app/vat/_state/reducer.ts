@@ -2,6 +2,7 @@ import {
     RESET_VAT,
     SET_IS_ADD_VAT_ALLOWED,
     SET_IS_LOADING,
+    SET_IS_SAVING,
     SET_IS_VAT_REFRESH_REQUIRED,
     SET_VAT,
     VATActionTypes,
@@ -11,6 +12,7 @@ import {
 const initialState: VATState = {
     isAddVATAllowed: false,
     isLoading: false,
+    isSaving: false,
     isVATRefreshRequired: false,
     vat: [] as VATState['vat'],
 };
@@ -30,6 +32,12 @@ export default (state = initialState, action: VATActionTypes): VATState => {
             return {
                 ...state,
                 isLoading: action.payload,
+            };
+
+        case SET_IS_SAVING:
+            return {
+                ...state,
+                isSaving: action.payload,
             };
 
         case SET_IS_VAT_REFRESH_REQUIRED:

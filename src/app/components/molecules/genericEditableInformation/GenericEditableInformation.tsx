@@ -89,14 +89,10 @@ const GenericEditableInformation: FunctionComponent<GenericEditableInformationPr
     warnings,
 }) => {
     const dispatch = useDispatch();
-    // const hasError = useSelector(({ error }) => error.hasError);
-    // const violations = useSelector(({ error }) => error.entityViolation.Violations || {}, shallowEqual);
-    const hasError = false;
-    const violations: { [key: string]: string } = {};
-    // const isModalVisible = useSelector(({ modal }) => modal.modalProps.isVisible);
-    // const isDialogVisible = useSelector(({ dialog }) => dialog.dialogProps.isVisible);
-    const isModalVisible = false;
-    const isDialogVisible = false;
+    const hasError = useSelector(({ error }) => error.hasError);
+    const violations = useSelector(({ error }) => error.error);
+    const isModalVisible = useSelector(({ modal }) => modal.modalProps.isVisible);
+    const isDialogVisible = useSelector(({ dialog }) => dialog.dialogProps.isVisible);
     const locale = useSelector(({ language }) => language.locale);
     const [isResetStatesRequested, setIsResetStatesRequested] = useState(false);
     const [localKeepEditMode, setLocalKeepEditMode] = useState(keepEditMode);

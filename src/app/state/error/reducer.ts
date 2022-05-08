@@ -5,6 +5,7 @@ import {
     SET_ERROR,
     SET_HAS_ERROR,
     SET_HAS_INACTIVITY_TIMEOUT,
+    SET_HAS_SERVER_ERROR,
     SET_HAS_UNAUTHORIZED_CALL,
 } from './types';
 
@@ -12,6 +13,7 @@ const initialState: ErrorState = {
     error: {} as ErrorState['error'],
     hasError: false,
     hasInactivityTimeout: false,
+    hasServerError: false,
     hasUnauthorizedCall: false,
 };
 
@@ -40,6 +42,12 @@ export default (state = initialState, action: ErrorActionTypes): ErrorState => {
             return {
                 ...state,
                 hasInactivityTimeout: action.payload,
+            };
+
+        case SET_HAS_SERVER_ERROR:
+            return {
+                ...state,
+                hasServerError: action.payload,
             };
 
         case SET_HAS_UNAUTHORIZED_CALL:
