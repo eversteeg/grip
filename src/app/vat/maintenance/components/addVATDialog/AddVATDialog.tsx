@@ -1,31 +1,29 @@
 import { ButtonSize, ButtonVariant, IconType, Input, InputType, isEmpty } from 'faralley-ui-kit';
 import React, { ChangeEvent, FunctionComponent, useCallback, useEffect, useState } from 'react';
-import { DialogFormElementWrapper } from '../../../components/atoms/dialogFormat/DialogFormat.sc';
-import { getViolationTexts } from '../../../utils/violationFunctions';
-import LocalizedString from '../../../components/atoms/localizedString/LocalizedString';
-import { maxInputWidth } from '../../../globals/constants';
-import { resetAllErrors } from '../../../state/error/actions';
-import { toDecimalNumber } from '../../../utils/formatFunctions';
-import { updateDialogProperties } from '../../../state/dialog/actions';
-import { updateVAT } from '../../_state/actions';
+import { addVAT } from '../../_state/actions';
+import { DialogFormElementWrapper } from '../../../../components/atoms/dialogFormat/DialogFormat.sc';
+import { getViolationTexts } from '../../../../utils/violationFunctions';
+import LocalizedString from '../../../../components/atoms/localizedString/LocalizedString';
+import { maxInputWidth } from '../../../../globals/constants';
+import { resetAllErrors } from '../../../../state/error/actions';
+import { toDecimalNumber } from '../../../../utils/formatFunctions';
+import { updateDialogProperties } from '../../../../state/dialog/actions';
 import { useDispatch } from 'react-redux';
-import useSelector from '../../../state/useSelector';
-import { VAT } from '../../../../@types/vat/VAT';
-import { ViolationList } from '../../../components/atoms/violationList/ViolationList.sc';
+import useSelector from '../../../../state/useSelector';
+import { ViolationList } from '../../../../components/atoms/violationList/ViolationList.sc';
 
-export interface UpdateVATDialogProps {
+export interface AddVATDialogProps {
     onClose: () => void;
-    previousVAT: VAT;
 }
 
-const UpdateVATDialog: FunctionComponent<UpdateVATDialogProps> = ({ onClose, previousVAT }) => {
+const AddVATDialog: FunctionComponent<AddVATDialogProps> = ({ onClose }) => {
     const dispatch = useDispatch();
-    const [description, setDescription] = useState(previousVAT.Description);
-    const [percentage, setPercentage] = useState(previousVAT.Percentage.toString());
+    const [description, setDescription] = useState('');
+    const [percentage, setPercentage] = useState('');
     const [isCloseDialogAllowed, setIsCloseDialogAllowed] = useState(false);
     const hasError = useSelector(({ error }) => error.hasError);
     const violations = useSelector(({ error }) => error.error);
-    const isSaving = useSelector(({ vat }) => vat.isSaving);
+    const isSaving = useSelector(({ vatMaintenance }) => vatMaintenance.isSaving);
 
     const resetViolations = useCallback(() => {
         setIsCloseDialogAllowed(false);
@@ -33,9 +31,9 @@ const UpdateVATDialog: FunctionComponent<UpdateVATDialogProps> = ({ onClose, pre
     }, []);
 
     const onConfirmEditCallback = useCallback(() => {
-        dispatch(updateVAT(previousVAT.VATId, toDecimalNumber(percentage), description));
+        dispatch(addVAT(toDecimalNumber(percentage), description));
         setIsCloseDialogAllowed(true);
-    }, [description, previousVAT, percentage]);
+    }, [description, percentage]);
 
     const onChangePercentage = useCallback((value: string) => {
         setPercentage(value);
@@ -62,7 +60,7 @@ const UpdateVATDialog: FunctionComponent<UpdateVATDialogProps> = ({ onClose, pre
                         variant: ButtonVariant.TEXT_ONLY,
                     },
                     {
-                        children: <LocalizedString value="Save" />,
+                        children: <LocalizedString value="Add" />,
                         iconType: IconType.PLUS,
                         isDisabled: isEmpty(description) || isEmpty(percentage),
                         isLoading: isSaving,
@@ -71,7 +69,7 @@ const UpdateVATDialog: FunctionComponent<UpdateVATDialogProps> = ({ onClose, pre
                     },
                 ],
                 isScrollable: false,
-                title: <LocalizedString value="ChangeVAT" />,
+                title: <LocalizedString value="AddVAT" />,
             })
         );
     }, [onClose, onConfirmEditCallback, description, isSaving, percentage]);
@@ -112,4 +110,4 @@ const UpdateVATDialog: FunctionComponent<UpdateVATDialogProps> = ({ onClose, pre
     );
 };
 
-export default UpdateVATDialog;
+export default AddVATDialog;

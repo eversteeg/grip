@@ -5,12 +5,12 @@ import {
     SET_IS_SAVING,
     SET_IS_VAT_REFRESH_REQUIRED,
     SET_VAT,
-    VATActionTypes,
+    VATMaintenanceActionTypes,
 } from './types';
-import { APIResult } from '../../../@types/APIResult';
-import { backendRequest } from '../../state/entity/actions';
-import { ThunkResult } from '../../state/store';
-import { VAT } from '../../../@types/vat/VAT';
+import { APIResult } from '../../../../@types/APIResult';
+import { backendRequest } from '../../../state/entity/actions';
+import { ThunkResult } from '../../../state/store';
+import { VAT } from '../../../../@types/vat/VAT';
 
 interface APIDelete {
     data: { vatId: number };
@@ -104,27 +104,27 @@ export const updateVAT =
         );
     };
 
-export const setIsAddVATAllowed = (isAllowed: boolean): VATActionTypes => ({
+export const setIsAddVATAllowed = (isAllowed: boolean): VATMaintenanceActionTypes => ({
     payload: isAllowed,
     type: SET_IS_ADD_VAT_ALLOWED,
 });
 
-export const setIsLoading = (isLoading: boolean): VATActionTypes => ({
+export const setIsLoading = (isLoading: boolean): VATMaintenanceActionTypes => ({
     payload: isLoading,
     type: SET_IS_LOADING,
 });
 
-export const setIsSaving = (isSaving: boolean): VATActionTypes => ({
+export const setIsSaving = (isSaving: boolean): VATMaintenanceActionTypes => ({
     payload: isSaving,
     type: SET_IS_SAVING,
 });
 
-export const setIsVATRefreshRequired = (isRefreshRequired: boolean): VATActionTypes => ({
+export const setIsVATRefreshRequired = (isRefreshRequired: boolean): VATMaintenanceActionTypes => ({
     payload: isRefreshRequired,
     type: SET_IS_VAT_REFRESH_REQUIRED,
 });
 
-export const setVAT = (vat: VAT[]): VATActionTypes => ({
+export const setVAT = (vat: VAT[]): VATMaintenanceActionTypes => ({
     payload: vat,
     type: SET_VAT,
 });

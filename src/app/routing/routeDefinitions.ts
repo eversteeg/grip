@@ -21,6 +21,7 @@ export interface Routes {
     };
     maintenance: {
         root: string;
+        vatMaintenance: string;
     };
     organization: {
         organizationDetails: string;
@@ -52,6 +53,7 @@ export const ROUTES: Routes = {
     },
     maintenance: {
         root: maintenanceRoot,
+        vatMaintenance: `${maintenanceRoot}/vat-maintenance`,
     },
     organization: {
         organizationDetails: `${organizationRoot}/organization-details/:publicOrganizationId`,

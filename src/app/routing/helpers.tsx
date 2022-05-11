@@ -13,7 +13,7 @@ import { ROUTES } from './routeDefinitions';
 import SettingsPage from '../user/settings/SettingsPage';
 import { Translations } from '../state/language/types';
 import UnsupportedAlert from '../user/login/unsupportedAlert/UnsupportedAlert';
-import VATOverview from '../vat/VATOverview';
+import VATMaintenance from '../vat/VATMaintenance';
 
 export const getPrivateRoutes = (): {
     privatePaths: string[];
@@ -21,7 +21,16 @@ export const getPrivateRoutes = (): {
 } => {
     const maintenanceRoutes: PrivateRoute[] = [
         {
-            children: [],
+            children: [
+                {
+                    component: <VATMaintenance />,
+                    exact: true,
+                    layoutProps: { contentWidth: ContentWidth.DETAIL },
+                    metaDescription: 'VAT',
+                    path: ROUTES.maintenance.vatMaintenance,
+                    text: 'VAT',
+                },
+            ],
             exact: true,
             iconType: IconType.GEAR,
             path: ROUTES.maintenance.root,
@@ -43,7 +52,7 @@ export const getPrivateRoutes = (): {
 
     const vatRoutes: PrivateRoute[] = [
         {
-            component: <VATOverview />,
+            component: <VATMaintenance />,
             exact: true,
             iconType: IconType.MONEY,
             layoutProps: { contentWidth: ContentWidth.DETAIL },

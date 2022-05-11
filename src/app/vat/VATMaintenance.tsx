@@ -1,12 +1,12 @@
 import { Button, ButtonSize, ButtonVariant, IconType, PanelHeader, Status } from 'faralley-ui-kit';
 import { closeDialog, openDialog } from '../state/dialog/actions';
 import { Column, Row } from '../components/atoms/grid/Grid';
-import { deleteVAT, getVAT } from './_state/actions';
+import { deleteVAT, getVAT } from './maintenance/_state/actions';
 import { EDIT_MODE, NR_OF_TABLE_ROWS_SMALL } from '../globals/constants';
 import { PanelHeaderOption, PanelHeaderOptions } from '../components/molecules/panelHeader/PanelHeader.sc';
 import React, { FunctionComponent, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { shallowEqual, useDispatch } from 'react-redux';
-import AddVATDialog from './components/addVATDialog/AddVATDialog';
+import AddVATDialog from './maintenance/components/addVATDialog/AddVATDialog';
 import { createTable } from '../utils/tableFunctions';
 import LocalizedString from '../components/atoms/localizedString/LocalizedString';
 import { resetAllErrors } from '../state/error/actions';
@@ -14,19 +14,23 @@ import Table from '../components/organisms/table/Table';
 import { tableColumnsVats } from './tableColumnsVats';
 import { Row as TableRow } from 'react-table';
 import { ThemeContext } from 'styled-components';
-import UpdateVATDialog from './components/updateVATDialog/UpdateVATDialog';
+import UpdateVATDialog from './maintenance/components/updateVATDialog/UpdateVATDialog';
 import useSelector from '../state/useSelector';
 import { VAT } from '../../@types/vat/VAT';
 
-const VATOverview: FunctionComponent = () => {
+const VATMaintenance: FunctionComponent = () => {
     const dispatch = useDispatch();
     const theme = useContext(ThemeContext);
     const [vats, setVats] = useState([] as Array<VAT>);
     const [editMode, setEditMode] = useState<EDIT_MODE>(EDIT_MODE.ADD);
     const [isDialogVisible, setIsDialogVisible] = useState(false);
     const [selectedVAT, setSelectedVAT] = useState<VAT>({} as VAT);
-    const vatValues = useSelector(({ vat }) => vat.vat);
-    const { isAddVATAllowed, isLoading, isVATRefreshRequired } = useSelector(({ vat }) => vat, shallowEqual);
+    const vatValues = useSelector(({ vatMaintenance }) => vatMaintenance.vat);
+
+    const { isAddVATAllowed, isLoading, isVATRefreshRequired } = useSelector(
+        ({ vatMaintenance }) => vatMaintenance,
+        shallowEqual
+    );
 
     const onAddCallback = useCallback(() => {
         setEditMode(EDIT_MODE.ADD);
@@ -202,4 +206,4 @@ const VATOverview: FunctionComponent = () => {
     );
 };
 
-export default VATOverview;
+export default VATMaintenance;
