@@ -32,7 +32,7 @@ export const addVAT =
                     dispatch(setIsVATRefreshRequired(!hasError));
                     dispatch(setIsSaving(false));
                 },
-                entity: 'vat/AddVAT',
+                entity: 'vat/maintenance/AddVAT',
                 method: 'POST',
             })
         );
@@ -53,7 +53,7 @@ export const deleteVAT =
                     dispatch(setIsVATRefreshRequired(apiResult.isSuccess));
                     dispatch(setIsSaving(false));
                 },
-                entity: 'vat/DeleteVAT',
+                entity: 'vat/maintenance/DeleteVAT',
                 method: 'DELETE',
                 parameters: { vatid: VATId },
             })
@@ -78,7 +78,7 @@ export const getVAT =
                     dispatch(setIsAddVATAllowed(result.IsAddAllowed || false));
                     dispatch(setIsLoading(false));
                 },
-                entity: 'vat/VAT',
+                entity: 'vat/maintenance/VAT',
             })
         );
     };
@@ -98,7 +98,7 @@ export const updateVAT =
                     dispatch(setIsVATRefreshRequired(!hasError));
                     dispatch(setIsSaving(false));
                 },
-                entity: 'vat/UpdateVAT',
+                entity: 'vat/maintenance/UpdateVAT',
                 method: 'PUT',
             })
         );

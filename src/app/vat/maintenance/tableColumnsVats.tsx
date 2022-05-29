@@ -1,10 +1,10 @@
 import { Alignment, ButtonIcon, IconType, Status, StatusCell, Theme } from 'faralley-ui-kit';
 import React, { ReactNode } from 'react';
 import { Column } from 'react-table';
-import { columnWidths } from '../styles/constants';
-import ContentCell from '../components/tableCells/contentCell/ContentCell';
-import LocalizedString from '../components/atoms/localizedString/LocalizedString';
-import { VAT } from '../../@types/vat/VAT';
+import { columnWidths } from '../../styles/constants';
+import ContentCell from '../../components/tableCells/contentCell/ContentCell';
+import LocalizedString from '../../components/atoms/localizedString/LocalizedString';
+import { VAT } from '../../../@types/vat/VAT';
 
 export const tableColumnsVats = (
     theme: Theme,

@@ -1,43 +1,69 @@
-import { Button, ButtonSize, ButtonVariant, IconType, PanelHeader, Status } from 'faralley-ui-kit';
+import {
+    Button,
+    ButtonSize,
+    ButtonVariant,
+    Dropdown,
+    DropdownOption,
+    DropdownVariant,
+    IconType,
+    PanelHeader,
+    SelectionControl,
+    Status,
+} from 'faralley-ui-kit';
 import { closeDialog, openDialog } from '../state/dialog/actions';
 import { Column, Row } from '../components/atoms/grid/Grid';
-import { deleteVAT, getVAT } from './maintenance/_state/actions';
+import { deleteVATItem, getVATItems } from './_state/actions';
 import { EDIT_MODE, NR_OF_TABLE_ROWS_SMALL } from '../globals/constants';
 import { PanelHeaderOption, PanelHeaderOptions } from '../components/molecules/panelHeader/PanelHeader.sc';
-import React, { FunctionComponent, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { ChangeEvent, FunctionComponent, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { shallowEqual, useDispatch } from 'react-redux';
-import AddVATDialog from './maintenance/components/addVATDialog/AddVATDialog';
+import { VATItem, VATType } from '../../@types/vat/VATItem';
+import AddVATItemDialog from './components/addVATItemDialog/AddVATItemDialog';
 import { createTable } from '../utils/tableFunctions';
+import { getTranslation } from '../utils/translationFunctions';
 import LocalizedString from '../components/atoms/localizedString/LocalizedString';
 import { resetAllErrors } from '../state/error/actions';
 import Table from '../components/organisms/table/Table';
-import { tableColumnsVats } from './tableColumnsVats';
+import { tableColumnsVatItems } from './tableColumnsVatItems';
 import { Row as TableRow } from 'react-table';
 import { ThemeContext } from 'styled-components';
-import UpdateVATDialog from './maintenance/components/updateVATDialog/UpdateVATDialog';
+import { Translations } from '../state/language/types';
+import UpdateVATItemDialog from './components/updateVATItemDialog/UpdateVATItemDialog';
 import useSelector from '../state/useSelector';
-import { VAT } from '../../@types/vat/VAT';
 
-const VATMaintenance: FunctionComponent = () => {
+const VATOverview: FunctionComponent = () => {
     const dispatch = useDispatch();
     const theme = useContext(ThemeContext);
-    const [vats, setVats] = useState([] as Array<VAT>);
+
+    const [dropdownOptions] = useState([
+        {
+            label: getTranslation(`VATType${VATType.ALL}` as keyof Translations),
+            value: VATType.ALL,
+        },
+        {
+            label: getTranslation(`VATType${VATType.CLAIM}` as keyof Translations),
+            value: VATType.CLAIM,
+        },
+        {
+            label: getTranslation(`VATType${VATType.CONVEY}` as keyof Translations),
+            value: VATType.CONVEY,
+        },
+    ]);
+
+    const [vats, setVats] = useState([] as Array<VATItem>);
+    const [vatType, setVatType] = useState<VATType>(VATType.ALL);
     const [editMode, setEditMode] = useState<EDIT_MODE>(EDIT_MODE.ADD);
     const [isDialogVisible, setIsDialogVisible] = useState(false);
-    const [selectedVAT, setSelectedVAT] = useState<VAT>({} as VAT);
-    const vatValues = useSelector(({ vatMaintenance }) => vatMaintenance.vat);
-
-    const { isAddVATAllowed, isLoading, isVATRefreshRequired } = useSelector(
-        ({ vatMaintenance }) => vatMaintenance,
-        shallowEqual
-    );
+    const [selectedVAT, setSelectedVAT] = useState<VATItem>({} as VATItem);
+    const [isShowAll, setIsShowAll] = useState(false);
+    const { isAddVATAllowed, isLoading, isVATRefreshRequired, vatItems } = useSelector(({ vat }) => vat, shallowEqual);
 
     const onAddCallback = useCallback(() => {
         setEditMode(EDIT_MODE.ADD);
         setIsDialogVisible(true);
     }, []);
 
-    const onEditCallback = useCallback((vat: VAT) => {
+    const onEditCallback = useCallback((vat: VATItem) => {
         if (vat.IsEditAllowed) {
             setSelectedVAT(vat);
             setEditMode(EDIT_MODE.EDIT);
@@ -45,12 +71,12 @@ const VATMaintenance: FunctionComponent = () => {
         }
     }, []);
 
-    const onConfirmDeleteCallback = useCallback((vat: VAT) => {
-        dispatch(deleteVAT(vat.VATId));
+    const onConfirmDeleteCallback = useCallback((vat: VATItem) => {
+        dispatch(deleteVATItem(vat.VATId));
         dispatch(closeDialog());
     }, []);
 
-    const onDeleteCallback = useCallback((vat: VAT) => {
+    const onDeleteCallback = useCallback((vat: VATItem) => {
         dispatch(
             openDialog({
                 footerButtons: [
@@ -77,12 +103,16 @@ const VATMaintenance: FunctionComponent = () => {
         );
     }, []);
 
-    const onClickRowCallback = useCallback((_, { original }: TableRow<VAT>) => {
+    const onClickRowCallback = useCallback((_, { original }: TableRow<VATItem>) => {
         onEditCallback(original);
     }, []);
 
-    const columnsVats = useMemo(
-        () => tableColumnsVats(theme, onDeleteCallback, onEditCallback),
+    const setSelectedVATTypeCallback = useCallback((event: ChangeEvent<HTMLSelectElement>) => {
+        setVatType(event.currentTarget.value as VATType);
+    }, []);
+
+    const columnsVatItems = useMemo(
+        () => tableColumnsVatItems(theme, onDeleteCallback, onEditCallback),
         [onDeleteCallback, onEditCallback]
     );
 
@@ -95,20 +125,20 @@ const VATMaintenance: FunctionComponent = () => {
         []
     );
 
-    const tableInstance = createTable<VAT>(columnsVats, vats, {
+    const tableInstance = createTable<VATItem>(columnsVatItems, vats, {
         sortBy,
     });
 
     const onCloseDialogCallback = useCallback(() => {
         setIsDialogVisible(false);
         dispatch(closeDialog());
-        setSelectedVAT({} as VAT);
+        setSelectedVAT({} as VATItem);
     }, []);
 
     const openEditVATDialog = useCallback(() => {
         dispatch(
             openDialog({
-                children: <UpdateVATDialog onClose={onCloseDialogCallback} previousVAT={selectedVAT} />,
+                children: <UpdateVATItemDialog onClose={onCloseDialogCallback} previousVATItem={selectedVAT} />,
                 footerButtons: [
                     {
                         children: <LocalizedString value="Cancel" />,
@@ -125,7 +155,7 @@ const VATMaintenance: FunctionComponent = () => {
     const openAddVATDialog = useCallback(() => {
         dispatch(
             openDialog({
-                children: <AddVATDialog onClose={onCloseDialogCallback} />,
+                children: <AddVATItemDialog onClose={onCloseDialogCallback} />,
                 footerButtons: [
                     {
                         children: <LocalizedString value="Cancel" />,
@@ -141,21 +171,21 @@ const VATMaintenance: FunctionComponent = () => {
 
     // Fetch initial data and every time showInactive has changed or a certificate is changed or added
     useEffect(() => {
-        dispatch(getVAT());
-    }, []);
+        dispatch(getVATItems(isShowAll, vatType));
+    }, [isShowAll, vatType]);
 
     // Fetch data again after a certificate is changed, added or deleted
     useEffect(() => {
         if (isVATRefreshRequired) {
-            dispatch(getVAT());
+            dispatch(getVATItems(isShowAll, vatType));
         }
     }, [isVATRefreshRequired]);
 
     useEffect(() => {
-        if (vatValues) {
-            setVats(vatValues);
+        if (vatItems) {
+            setVats(vatItems);
         }
-    }, [vatValues]);
+    }, [vatItems]);
 
     useEffect(() => {
         if (isDialogVisible) {
@@ -189,6 +219,28 @@ const VATMaintenance: FunctionComponent = () => {
                                         <LocalizedString value="Add" />
                                     </Button>
                                 </PanelHeaderOption>
+                                <PanelHeaderOption>
+                                    <Dropdown
+                                        name="pickListVATType"
+                                        onChange={setSelectedVATTypeCallback}
+                                        options={dropdownOptions}
+                                        placeholder={getTranslation('NothingSelected')}
+                                        value={vatType}
+                                        variant={DropdownVariant.COMPACT}
+                                    />
+                                </PanelHeaderOption>
+
+                                <PanelHeaderOption>
+                                    <SelectionControl
+                                        hasAlternativeTextStyle
+                                        isChecked={isShowAll}
+                                        isDisabled={isLoading}
+                                        label={<LocalizedString value="ShowAll" />}
+                                        name="isShowAll"
+                                        onChange={() => setIsShowAll(!isShowAll)}
+                                        value="isShowAll"
+                                    />
+                                </PanelHeaderOption>
                             </PanelHeaderOptions>
                         }
                         title={<LocalizedString value="VATs" />}
@@ -206,4 +258,4 @@ const VATMaintenance: FunctionComponent = () => {
     );
 };
 
-export default VATMaintenance;
+export default VATOverview;

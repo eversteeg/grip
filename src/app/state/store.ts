@@ -11,6 +11,7 @@ import modal from './modal/reducer';
 import sharedNavigationInfo from './shared/navigationInfo/reducer';
 import sidePanel from './sidepanel/reducer';
 import user from './user/reducer';
+import vat from '../vat/_state/reducer';
 import vatMaintenance from '../vat/maintenance/_state/reducer';
 
 const rootReducer = combineReducers({
@@ -24,6 +25,7 @@ const rootReducer = combineReducers({
     sharedNavigationInfo,
     sidePanel,
     user,
+    vat,
     vatMaintenance,
 });
 

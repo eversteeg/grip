@@ -30,6 +30,8 @@ export interface Translations {
     AddName: string;
     AddNameOptional: string;
     AddVAT: string;
+    Amount: string;
+    AmountVAT: string;
     AppSettings: string;
     BackToHome: string;
     Cancel: string;
@@ -77,7 +79,9 @@ export interface Translations {
     No: string;
     NoDataKnown: string;
     NoEmailReceived: string;
+    NothingSelected: string;
     Of: string;
+    Organization: string;
     OrganizationDetails: string;
     Page: string;
     Password: string;
@@ -93,11 +97,13 @@ export interface Translations {
     SendInstructions: string;
     Settings: string;
     Show: string;
+    ShowAll: string;
     Sort: string;
     Support: string;
     TermsOfUse: string;
     TooBigToUpload: string;
     TooLongFileName: string;
+    Type: string;
     Unknown: string;
     UnsavedChangesAlert: string;
     UnsupportedAlert: string;
@@ -110,6 +116,11 @@ export interface Translations {
     UploadingFiles: string;
     UseDarkTheme: string;
     VAT: string;
+    VATDate: string;
+    VATType: string;
+    VATTypeALL: string;
+    VATTypeCLAIM: string;
+    VATTypeCONVEY: string;
     VATs: string;
     Version: string;
     WrongExtension: string;
