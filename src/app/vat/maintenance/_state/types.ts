@@ -1,4 +1,5 @@
 import { VAT } from '../../../../@types/vat/VAT';
+import { VATType } from '../../../../@types/vat/VATType';
 
 export interface VATMaintenanceState {
     isAddVATAllowed: boolean;
@@ -6,19 +7,13 @@ export interface VATMaintenanceState {
     isSaving: boolean;
     isVATRefreshRequired: boolean;
     vat: VAT[];
+    vatType: VATType[];
 }
 
 export const RESET_VAT = 'vatMaintenance.RESET_VAT';
 
 interface ResetVATAction {
     type: typeof RESET_VAT;
-}
-
-export const SET_VAT = 'vatMaintenance.SET_VAT';
-
-interface SetVATAction {
-    payload: VAT[];
-    type: typeof SET_VAT;
 }
 
 export const SET_IS_ADD_VAT_ALLOWED = 'vatMaintenance.SET_IS_ADD_VAT_ALLOWED';
@@ -49,10 +44,25 @@ interface SetIsVATRefreshRequiredAction {
     type: typeof SET_IS_VAT_REFRESH_REQUIRED;
 }
 
+export const SET_VAT = 'vatMaintenance.SET_VAT';
+
+interface SetVATAction {
+    payload: VAT[];
+    type: typeof SET_VAT;
+}
+
+export const SET_VATTYPE = 'vatMaintenance.SET_VATTYPE';
+
+interface SetVATTypeAction {
+    payload: VATType[];
+    type: typeof SET_VATTYPE;
+}
+
 export type VATMaintenanceActionTypes =
     | ResetVATAction
     | SetIsAddVATAllowedAction
     | SetIsLoadingAction
     | SetIsSavingAction
     | SetIsVATRefreshRequiredAction
-    | SetVATAction;
+    | SetVATAction
+    | SetVATTypeAction;

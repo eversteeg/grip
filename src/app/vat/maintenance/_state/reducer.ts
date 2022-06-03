@@ -5,6 +5,7 @@ import {
     SET_IS_SAVING,
     SET_IS_VAT_REFRESH_REQUIRED,
     SET_VAT,
+    SET_VATTYPE,
     VATMaintenanceActionTypes,
     VATMaintenanceState,
 } from './types';
@@ -15,6 +16,7 @@ const initialState: VATMaintenanceState = {
     isSaving: false,
     isVATRefreshRequired: false,
     vat: [] as VATMaintenanceState['vat'],
+    vatType: [] as VATMaintenanceState['vatType'],
 };
 
 export default (state = initialState, action: VATMaintenanceActionTypes): VATMaintenanceState => {
@@ -50,6 +52,12 @@ export default (state = initialState, action: VATMaintenanceActionTypes): VATMai
             return {
                 ...state,
                 vat: action.payload,
+            };
+
+        case SET_VATTYPE:
+            return {
+                ...state,
+                vatType: action.payload,
             };
 
         default:

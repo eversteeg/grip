@@ -7,10 +7,10 @@ import {
     SET_VAT_ITEMS,
     VATActionTypes,
 } from './types';
+import { VATItem, VATType } from '../../../@types/vat/VATItem';
 import { APIResult } from '../../../@types/APIResult';
 import { backendRequest } from '../../state/entity/actions';
 import { ThunkResult } from '../../state/store';
-import { VATItem, VATType } from '../../../@types/vat/VATItem';
 
 interface APIDelete {
     data: { vatId: number };
@@ -112,13 +112,18 @@ export const getVATItems =
     };
 
 export const updateVATItem =
-    (vatid: number, percentage: number, description: string): ThunkResult =>
+    (vatItem: VATItem): ThunkResult =>
     (dispatch): void => {
         dispatch(setIsSaving(true));
 
         dispatch(
             backendRequest({
-                body: { description, percentage, vatid },
+                body: {
+                    amount: vatItem.Amount,
+                    amountvat: vatItem.AmountVAT,
+                    description: vatItem.Description,
+                    vatid: vatItem.VATId,
+                },
                 callbackError: (): void => {
                     dispatch(setIsSaving(false));
                 },

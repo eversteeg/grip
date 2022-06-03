@@ -5,12 +5,16 @@ import {
     SET_IS_SAVING,
     SET_IS_VAT_REFRESH_REQUIRED,
     SET_VAT,
+    SET_VATTYPE,
     VATMaintenanceActionTypes,
 } from './types';
 import { APIResult } from '../../../../@types/APIResult';
 import { backendRequest } from '../../../state/entity/actions';
 import { ThunkResult } from '../../../state/store';
 import { VAT } from '../../../../@types/vat/VAT';
+import { VATType } from '../../../../@types/vat/VATType';
+import { VATType as VATTypeEnum } from '../../../../@types/vat/VATItem';
+import { Locale } from 'faralley-ui-kit';
 
 interface APIDelete {
     data: { vatId: number };
@@ -83,6 +87,28 @@ export const getVAT =
         );
     };
 
+export const getVATType =
+    (): ThunkResult =>
+    (dispatch, getState): void => {
+        const { locale } = getState().language;
+        dispatch(setIsLoading(true));
+
+        dispatch(
+            setVATType([
+                {
+                    Description: locale === Locale.EN ? 'Claim' : 'Vorderen',
+                    VATType: VATTypeEnum.CLAIM,
+                },
+                {
+                    Description: locale === Locale.EN ? 'Convey' : 'Afdragen',
+                    VATType: VATTypeEnum.CONVEY,
+                },
+            ] as VATType[])
+        );
+
+        dispatch(setIsLoading(false));
+    };
+
 export const updateVAT =
     (vatid: number, percentage: number, description: string): ThunkResult =>
     (dispatch): void => {
@@ -127,4 +153,9 @@ export const setIsVATRefreshRequired = (isRefreshRequired: boolean): VATMaintena
 export const setVAT = (vat: VAT[]): VATMaintenanceActionTypes => ({
     payload: vat,
     type: SET_VAT,
+});
+
+export const setVATType = (vatType: VATType[]): VATMaintenanceActionTypes => ({
+    payload: vatType,
+    type: SET_VATTYPE,
 });

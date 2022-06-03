@@ -38,6 +38,7 @@ export interface Translations {
     Change: string;
     ChangePassword: string;
     ChangeVAT: string;
+    ChangeVATItem: string;
     ChooseAnotherFile: string;
     ChooseFile: string;
     CloseWindow: string;
