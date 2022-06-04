@@ -115,6 +115,7 @@ export const updateVATItem =
     (vatItem: VATItem): ThunkResult =>
     (dispatch): void => {
         dispatch(setIsSaving(true));
+        console.log('updateVATItem', vatItem);
 
         dispatch(
             backendRequest({

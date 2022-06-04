@@ -32,6 +32,7 @@
     "Error404": "404 - Pagina niet gevonden",
     "Error404Text": "De pagina die je zoekt bestaat niet (meer) of is verplaatst.",
     "ErrorInactivity": "U wordt wegens langdurige inactiviteit uitgelogd",
+    "ErrorInvalidAmount": "Ongeldig bedrag",
     "ErrorOAuthFailed": "De combinatie van het door jou ingevoerde e-mailadres en wachtwoord is ongeldig. Probeer het opnieuw.",
     "ErrorServerFailure": "Er is een fout opgetreden. De server lijkt onbereikbaar. Probeer het later opnieuw.",
     "ErrorUnauthorizedCall": "Deze actie is voor u (nog) niet toegestaan.",

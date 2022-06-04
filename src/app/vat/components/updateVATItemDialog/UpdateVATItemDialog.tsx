@@ -5,8 +5,12 @@ import {
     DropdownVariant,
     IconType,
     Input,
+    InputCurrency,
+    InputVariant,
     isEmpty,
     selectOptionsFacade,
+    toCents,
+    toMoneyValue,
 } from 'faralley-ui-kit';
 import { getVAT, getVATType } from '../../maintenance/_state/actions';
 import React, { ChangeEvent, FunctionComponent, useCallback, useEffect, useState } from 'react';
@@ -35,13 +39,13 @@ const UpdateVATItemDialog: FunctionComponent<UpdateVATItemDialogProps> = ({ onCl
     const [selectedVAT, setSelectedVAT] = useState<VAT>({} as VAT);
     const [selectedVATType, setSelectedVATType] = useState<VATType>({} as VATType);
     const [isCloseDialogAllowed, setIsCloseDialogAllowed] = useState(false);
+    const genericErrorMessages = useSelector(({ language }) => language.genericErrorMessages);
     const hasError = useSelector(({ error }) => error.hasError);
+    const locale = useSelector(({ language }) => language.locale);
     const violations = useSelector(({ error }) => error.error);
     const { isSaving, vat, vatType } = useSelector(({ vatMaintenance }) => vatMaintenance, shallowEqual);
-
-    console.log('****************** newvat', newVATItem);
-    console.log('****************** selectedVATType', selectedVATType);
-    console.log('****************** vat', vat);
+    const [amount, setAmount] = useState(previousVATItem.Amount.toString());
+    const [amountVAT, setAmountVAT] = useState(previousVATItem.AmountVAT.toString());
 
     const resetViolations = useCallback(() => {
         setIsCloseDialogAllowed(false);
@@ -49,9 +53,16 @@ const UpdateVATItemDialog: FunctionComponent<UpdateVATItemDialogProps> = ({ onCl
     }, []);
 
     const onConfirmEditCallback = useCallback(() => {
-        dispatch(updateVATItem(newVATItem));
+        dispatch(
+            updateVATItem({
+                ...newVATItem,
+                Amount: toCents(amount) / 100,
+                AmountVAT: toCents(amountVAT) / 100,
+            })
+        );
+
         setIsCloseDialogAllowed(true);
-    }, [newVATItem]);
+    }, [amount, amountVAT, newVATItem]);
 
     const onChangeVATCallback = useCallback(
         (newVATId: string) => {
@@ -81,11 +92,24 @@ const UpdateVATItemDialog: FunctionComponent<UpdateVATItemDialogProps> = ({ onCl
         [vatType]
     );
 
+    const onChangeAmountCallback = (event: ChangeEvent<HTMLInputElement>): void => {
+        setAmount(event.currentTarget.value);
+    };
+
     // Fetch picklist of vats
     useEffect(() => {
         dispatch(getVAT());
         dispatch(getVATType());
     }, []);
+
+    // Calculate and set amount vat
+    useEffect(() => {
+        if (amount && selectedVAT && selectedVAT.Percentage) {
+            const percentage = 100 + 100 * selectedVAT.Percentage;
+            const amountExclVAT = toMoneyValue(toCents(amount) / percentage, locale);
+            setAmountVAT(((toCents(amount) - toCents(amountExclVAT)) / 100).toString());
+        }
+    }, [amount, selectedVAT]);
 
     // Set correct vatid
     useEffect(() => {
@@ -135,7 +159,9 @@ const UpdateVATItemDialog: FunctionComponent<UpdateVATItemDialogProps> = ({ onCl
         <>
             <DialogFormElementWrapper>
                 <Dropdown
-                    label={<LocalizedString value="Percentage" />}
+                    errorMessage={genericErrorMessages.required}
+                    isRequired
+                    label={<LocalizedString value="VATType" />}
                     name="vatType"
                     onChange={({ currentTarget }): void => {
                         onChangeVATTypeCallback(currentTarget.value);
@@ -147,6 +173,8 @@ const UpdateVATItemDialog: FunctionComponent<UpdateVATItemDialogProps> = ({ onCl
             </DialogFormElementWrapper>
             <DialogFormElementWrapper>
                 <Dropdown
+                    errorMessage={genericErrorMessages.required}
+                    isRequired
                     label={<LocalizedString value="Percentage" />}
                     name="vat"
                     onChange={({ currentTarget }): void => {
@@ -159,6 +187,8 @@ const UpdateVATItemDialog: FunctionComponent<UpdateVATItemDialogProps> = ({ onCl
             </DialogFormElementWrapper>
             <DialogFormElementWrapper>
                 <Input
+                    errorMessage={genericErrorMessages.required}
+                    isRequired
                     label={<LocalizedString value="Description" />}
                     maxLength={maxInputWidth.xshort}
                     name="description"
@@ -171,6 +201,29 @@ const UpdateVATItemDialog: FunctionComponent<UpdateVATItemDialogProps> = ({ onCl
                         resetViolations();
                     }}
                     value={newVATItem.Description}
+                />
+            </DialogFormElementWrapper>
+            <DialogFormElementWrapper>
+                <InputCurrency
+                    errorMessage={<LocalizedString value="ErrorInvalidAmount" />}
+                    isRequired
+                    label={<LocalizedString value="Amount" />}
+                    locale={locale}
+                    name="amount"
+                    onChange={onChangeAmountCallback}
+                    value={amount}
+                    variant={InputVariant.OUTLINE}
+                />
+            </DialogFormElementWrapper>
+            <DialogFormElementWrapper>
+                <InputCurrency
+                    errorMessage={<LocalizedString value="ErrorInvalidAmount" />}
+                    isDisabled
+                    label={<LocalizedString value="AmountVAT" />}
+                    locale={locale}
+                    name="amountVAT"
+                    value={amountVAT}
+                    variant={InputVariant.OUTLINE}
                 />
             </DialogFormElementWrapper>
 
