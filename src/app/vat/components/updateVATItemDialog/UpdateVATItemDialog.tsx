@@ -11,7 +11,9 @@ import {
     selectOptionsFacade,
     toCents,
     toMoneyValue,
+    toNumber,
 } from 'faralley-ui-kit';
+import { getOrganizationPicklist, setOrganizationOptions } from '../../../organization/maintenance/_state/actions';
 import { getVAT, getVATType } from '../../maintenance/_state/actions';
 import React, { ChangeEvent, FunctionComponent, useCallback, useEffect, useState } from 'react';
 import { shallowEqual, useDispatch } from 'react-redux';
@@ -20,6 +22,7 @@ import { DialogFormElementWrapper } from '../../../components/atoms/dialogFormat
 import { getViolationTexts } from '../../../utils/violationFunctions';
 import LocalizedString from '../../../components/atoms/localizedString/LocalizedString';
 import { maxInputWidth } from '../../../globals/constants';
+import { OrganizationOption } from '../../../../@types/organization/OrganizationOption';
 import { resetAllErrors } from '../../../state/error/actions';
 import { updateDialogProperties } from '../../../state/dialog/actions';
 import { updateVATItem } from '../../_state/actions';
@@ -36,14 +39,23 @@ export interface UpdateVATItemDialogProps {
 const UpdateVATItemDialog: FunctionComponent<UpdateVATItemDialogProps> = ({ onClose, previousVATItem }) => {
     const dispatch = useDispatch();
     const [newVATItem, setNewVATItem] = useState(previousVATItem);
+    const [selectedOrganization, setSelectedOrganization] = useState<OrganizationOption>({} as OrganizationOption);
     const [selectedVAT, setSelectedVAT] = useState<VAT>({} as VAT);
     const [selectedVATType, setSelectedVATType] = useState<VATType>({} as VATType);
     const [isCloseDialogAllowed, setIsCloseDialogAllowed] = useState(false);
+    const [isSaveAllowed, setIsSaveAllowed] = useState(false);
     const genericErrorMessages = useSelector(({ language }) => language.genericErrorMessages);
     const hasError = useSelector(({ error }) => error.hasError);
     const locale = useSelector(({ language }) => language.locale);
     const violations = useSelector(({ error }) => error.error);
-    const { isSaving, vat, vatType } = useSelector(({ vatMaintenance }) => vatMaintenance, shallowEqual);
+    const isSaving = useSelector(({ vat }) => vat.isSaving);
+    const { vat, vatType } = useSelector(({ vatMaintenance }) => vatMaintenance, shallowEqual);
+
+    const { isLoading, organizationOptions } = useSelector(
+        ({ organizationMaintenance }) => organizationMaintenance,
+        shallowEqual
+    );
+
     const [amount, setAmount] = useState(previousVATItem.Amount.toString());
     const [amountVAT, setAmountVAT] = useState(previousVATItem.AmountVAT.toString());
 
@@ -75,7 +87,36 @@ const UpdateVATItemDialog: FunctionComponent<UpdateVATItemDialogProps> = ({ onCl
                 VATId: newItem.VATId,
             });
         },
-        [vat]
+        [newVATItem, vat]
+    );
+
+    const onChangeOrganizationCallback = useCallback(
+        (newOrganizationId: string) => {
+            const newItem =
+                organizationOptions.find((item) => item.Id === toNumber(newOrganizationId)) ||
+                ({} as OrganizationOption);
+
+            newItem.IsSelected = true;
+
+            // Just to be accurate and sure, replace isselected value
+            dispatch(
+                setOrganizationOptions(
+                    organizationOptions.map((item) => ({
+                        ...item,
+                        IsSelected: item.Id === newItem.Id,
+                    }))
+                )
+            );
+
+            setSelectedOrganization(newItem);
+
+            setNewVATItem({
+                ...newVATItem,
+                OrganizationId: newItem.Id,
+                OrganizationName: newItem.Description,
+            });
+        },
+        [newVATItem, organizationOptions]
     );
 
     const onChangeVATTypeCallback = useCallback(
@@ -89,7 +130,7 @@ const UpdateVATItemDialog: FunctionComponent<UpdateVATItemDialogProps> = ({ onCl
                 VATTypeDescription: newItem.Description,
             });
         },
-        [vatType]
+        [newVATItem, vatType]
     );
 
     const onChangeAmountCallback = (event: ChangeEvent<HTMLInputElement>): void => {
@@ -98,6 +139,7 @@ const UpdateVATItemDialog: FunctionComponent<UpdateVATItemDialogProps> = ({ onCl
 
     // Fetch picklist of vats
     useEffect(() => {
+        dispatch(getOrganizationPicklist());
         dispatch(getVAT());
         dispatch(getVATType());
     }, []);
@@ -111,6 +153,16 @@ const UpdateVATItemDialog: FunctionComponent<UpdateVATItemDialogProps> = ({ onCl
         }
     }, [amount, selectedVAT]);
 
+    // Set correct organization
+    useEffect(() => {
+        if (!selectedOrganization || isEmpty(selectedOrganization.Id)) {
+            setSelectedOrganization(
+                organizationOptions.find((item) => item.Id === previousVATItem.OrganizationId) ||
+                    ({} as OrganizationOption)
+            );
+        }
+    }, [previousVATItem, organizationOptions, selectedOrganization]);
+
     // Set correct vatid
     useEffect(() => {
         setSelectedVAT(vat.find((item) => item.VATId === previousVATItem.VATId) || ({} as VAT));
@@ -123,10 +175,24 @@ const UpdateVATItemDialog: FunctionComponent<UpdateVATItemDialogProps> = ({ onCl
 
     // Check if closing is allowed
     useEffect(() => {
-        if (!hasError && !isSaving && isCloseDialogAllowed) {
+        if (!hasError && !isLoading && !isSaving && isCloseDialogAllowed) {
             onClose();
         }
-    }, [hasError, isSaving]);
+    }, [hasError, isCloseDialogAllowed, isLoading, isSaving]);
+
+    // Check if saving is allowed
+    useEffect(() => {
+        setIsSaveAllowed(
+            !isEmpty(newVATItem.VATItemId) &&
+                !isEmpty(newVATItem.VATId) &&
+                !isEmpty(newVATItem.VATType) &&
+                !isEmpty(newVATItem.OrganizationId) &&
+                !isEmpty(newVATItem.Amount) &&
+                newVATItem.Amount !== 0 &&
+                !isEmpty(newVATItem.ArticleNumber) &&
+                !isEmpty(newVATItem.Description)
+        );
+    }, [newVATItem]);
 
     useEffect(() => {
         dispatch(
@@ -135,7 +201,7 @@ const UpdateVATItemDialog: FunctionComponent<UpdateVATItemDialogProps> = ({ onCl
                     {
                         children: <LocalizedString value="Cancel" />,
                         iconType: IconType.CROSS,
-                        isDisabled: isSaving,
+                        isDisabled: isLoading || isSaving,
                         onClick: onClose,
                         size: ButtonSize.SMALL,
                         variant: ButtonVariant.TEXT_ONLY,
@@ -143,8 +209,8 @@ const UpdateVATItemDialog: FunctionComponent<UpdateVATItemDialogProps> = ({ onCl
                     {
                         children: <LocalizedString value="Save" />,
                         iconType: IconType.PLUS,
-                        isDisabled: isEmpty(newVATItem.Description),
-                        isLoading: isSaving,
+                        isDisabled: !isSaveAllowed,
+                        isLoading: isLoading || isSaving,
                         onClick: onConfirmEditCallback,
                         size: ButtonSize.SMALL,
                     },
@@ -153,10 +219,34 @@ const UpdateVATItemDialog: FunctionComponent<UpdateVATItemDialogProps> = ({ onCl
                 title: <LocalizedString value="ChangeVATItem" />,
             })
         );
-    }, [onClose, onConfirmEditCallback, isSaving, newVATItem]);
+    }, [onClose, onConfirmEditCallback, isLoading, isSaveAllowed, isSaving, newVATItem]);
 
     return (
         <>
+            <DialogFormElementWrapper>
+                <InputCurrency
+                    autoFocus
+                    errorMessage={<LocalizedString value="ErrorInvalidAmount" />}
+                    isRequired
+                    label={<LocalizedString value="Amount" />}
+                    locale={locale}
+                    name="amount"
+                    onChange={onChangeAmountCallback}
+                    value={amount}
+                    variant={InputVariant.OUTLINE}
+                />
+            </DialogFormElementWrapper>
+            <DialogFormElementWrapper>
+                <InputCurrency
+                    errorMessage={<LocalizedString value="ErrorInvalidAmount" />}
+                    isDisabled
+                    label={<LocalizedString value="AmountVAT" />}
+                    locale={locale}
+                    name="amountVAT"
+                    value={amountVAT}
+                    variant={InputVariant.OUTLINE}
+                />
+            </DialogFormElementWrapper>
             <DialogFormElementWrapper>
                 <Dropdown
                     errorMessage={genericErrorMessages.required}
@@ -190,7 +280,7 @@ const UpdateVATItemDialog: FunctionComponent<UpdateVATItemDialogProps> = ({ onCl
                     errorMessage={genericErrorMessages.required}
                     isRequired
                     label={<LocalizedString value="Description" />}
-                    maxLength={maxInputWidth.xshort}
+                    maxLength={maxInputWidth.textDefault}
                     name="description"
                     onChange={(event: ChangeEvent<HTMLInputElement>) => {
                         setNewVATItem({
@@ -204,26 +294,35 @@ const UpdateVATItemDialog: FunctionComponent<UpdateVATItemDialogProps> = ({ onCl
                 />
             </DialogFormElementWrapper>
             <DialogFormElementWrapper>
-                <InputCurrency
-                    errorMessage={<LocalizedString value="ErrorInvalidAmount" />}
+                <Input
+                    errorMessage={genericErrorMessages.required}
                     isRequired
-                    label={<LocalizedString value="Amount" />}
-                    locale={locale}
-                    name="amount"
-                    onChange={onChangeAmountCallback}
-                    value={amount}
-                    variant={InputVariant.OUTLINE}
+                    label={<LocalizedString value="ArticleNumber" />}
+                    maxLength={maxInputWidth.textDefault}
+                    name="articlenumber"
+                    onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                        setNewVATItem({
+                            ...newVATItem,
+                            ArticleNumber: event.currentTarget.value,
+                        });
+
+                        resetViolations();
+                    }}
+                    value={newVATItem.ArticleNumber}
                 />
             </DialogFormElementWrapper>
             <DialogFormElementWrapper>
-                <InputCurrency
-                    errorMessage={<LocalizedString value="ErrorInvalidAmount" />}
-                    isDisabled
-                    label={<LocalizedString value="AmountVAT" />}
-                    locale={locale}
-                    name="amountVAT"
-                    value={amountVAT}
-                    variant={InputVariant.OUTLINE}
+                <Dropdown
+                    errorMessage={genericErrorMessages.required}
+                    isRequired
+                    label={<LocalizedString value="Organization" />}
+                    name="organizationId"
+                    onChange={({ currentTarget }): void => {
+                        onChangeOrganizationCallback(currentTarget.value);
+                    }}
+                    options={selectOptionsFacade(organizationOptions, 'Description', 'Id')}
+                    value={selectedOrganization.Id || ''}
+                    variant={DropdownVariant.OUTLINE}
                 />
             </DialogFormElementWrapper>
 

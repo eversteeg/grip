@@ -33,6 +33,7 @@ export interface Translations {
     Amount: string;
     AmountVAT: string;
     AppSettings: string;
+    ArticleNumber: string;
     BackToHome: string;
     Cancel: string;
     Change: string;

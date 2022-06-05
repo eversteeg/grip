@@ -10,11 +10,11 @@ import {
 } from './types';
 import { APIResult } from '../../../../@types/APIResult';
 import { backendRequest } from '../../../state/entity/actions';
+import { Locale } from 'faralley-ui-kit';
 import { ThunkResult } from '../../../state/store';
 import { VAT } from '../../../../@types/vat/VAT';
 import { VATType } from '../../../../@types/vat/VATType';
 import { VATType as VATTypeEnum } from '../../../../@types/vat/VATItem';
-import { Locale } from 'faralley-ui-kit';
 
 interface APIDelete {
     data: { vatId: number };
@@ -94,19 +94,37 @@ export const getVATType =
         dispatch(setIsLoading(true));
 
         dispatch(
-            setVATType([
-                {
-                    Description: locale === Locale.EN ? 'Claim' : 'Vorderen',
-                    VATType: VATTypeEnum.CLAIM,
+            backendRequest({
+                callbackError: (): void => {
+                    dispatch(setIsLoading(false));
                 },
-                {
-                    Description: locale === Locale.EN ? 'Convey' : 'Afdragen',
-                    VATType: VATTypeEnum.CONVEY,
-                },
-            ] as VATType[])
-        );
+                callbackSuccess: ({ result }: APIResult): void => {
+                    const apiResult: VATType[] = result.data as VATType[];
 
-        dispatch(setIsLoading(false));
+                    dispatch(
+                        setVATType(
+                            apiResult.map((item) => {
+                                if (item.VATType === VATTypeEnum.CLAIM) {
+                                    return {
+                                        ...item,
+                                        Description: locale === Locale.EN ? 'Claim' : 'Vorderen',
+                                    };
+                                }
+
+                                // CONVEY
+                                return {
+                                    ...item,
+                                    Description: locale === Locale.EN ? 'Convey' : 'Afdragen',
+                                };
+                            })
+                        )
+                    );
+
+                    dispatch(setIsLoading(false));
+                },
+                entity: 'vat/maintenance/VATType',
+            })
+        );
     };
 
 export const updateVAT =

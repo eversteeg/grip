@@ -8,6 +8,7 @@ import error from './error/reducer';
 import global from './global/reducer';
 import language from './language/reducer';
 import modal from './modal/reducer';
+import organizationMaintenance from '../organization/maintenance/_state/reducer';
 import sharedNavigationInfo from './shared/navigationInfo/reducer';
 import sidePanel from './sidepanel/reducer';
 import user from './user/reducer';
@@ -22,6 +23,7 @@ const rootReducer = combineReducers({
     global,
     language,
     modal,
+    organizationMaintenance,
     sharedNavigationInfo,
     sidePanel,
     user,

@@ -18,13 +18,13 @@ interface APIDelete {
 }
 
 export const addVATItem =
-    (percentage: number, description: string): ThunkResult =>
+    (vatItem: VATItem): ThunkResult =>
     (dispatch): void => {
         dispatch(setIsSaving(true));
 
         dispatch(
             backendRequest({
-                body: { description, percentage },
+                body: { ...vatItem },
                 callbackError: (): void => {
                     dispatch(setIsSaving(false));
                 },
@@ -39,7 +39,7 @@ export const addVATItem =
     };
 
 export const deleteVATItem =
-    (VATId: number): ThunkResult =>
+    (VATItemId: number): ThunkResult =>
     (dispatch): void => {
         dispatch(setIsSaving(true));
 
@@ -55,7 +55,7 @@ export const deleteVATItem =
                 },
                 entity: 'vat/DeleteVATItem',
                 method: 'DELETE',
-                parameters: { vatid: VATId },
+                parameters: { vatitemid: VATItemId },
             })
         );
     };
@@ -115,16 +115,10 @@ export const updateVATItem =
     (vatItem: VATItem): ThunkResult =>
     (dispatch): void => {
         dispatch(setIsSaving(true));
-        console.log('updateVATItem', vatItem);
 
         dispatch(
             backendRequest({
-                body: {
-                    amount: vatItem.Amount,
-                    amountvat: vatItem.AmountVAT,
-                    description: vatItem.Description,
-                    vatid: vatItem.VATId,
-                },
+                body: { ...vatItem },
                 callbackError: (): void => {
                     dispatch(setIsSaving(false));
                 },

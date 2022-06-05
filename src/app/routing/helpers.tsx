@@ -6,7 +6,7 @@ import React, { ReactNode } from 'react';
 import { IconType } from 'faralley-ui-kit';
 import { isNestedPrivateRoute } from '../utils/typeGuards/isNestedPrivateRoute';
 import LoginPage from '../user/login/LoginPage';
-import OrganizationDetailsPage from '../components/organization/organizationDetails/OrganizationDetailsPage';
+import OrganizationDetailsPage from '../organization/organizationDetails/OrganizationDetailsPage';
 import PasswordRequestPage from '../user/passwordRequest/PasswordRequestPage';
 import PasswordResetPage from '../user/passwordReset/PasswordResetPage';
 import { ROUTES } from './routeDefinitions';

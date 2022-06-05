@@ -3,7 +3,6 @@ import {
     ButtonSize,
     ButtonVariant,
     Dropdown,
-    DropdownOption,
     DropdownVariant,
     IconType,
     PanelHeader,
@@ -72,7 +71,7 @@ const VATOverview: FunctionComponent = () => {
     }, []);
 
     const onConfirmDeleteCallback = useCallback((vat: VATItem) => {
-        dispatch(deleteVATItem(vat.VATId));
+        dispatch(deleteVATItem(vat.VATItemId));
         dispatch(closeDialog());
     }, []);
 
@@ -147,7 +146,7 @@ const VATOverview: FunctionComponent = () => {
                         variant: ButtonVariant.TEXT_ONLY,
                     },
                 ],
-                iconType: IconType.AWARD,
+                iconType: IconType.MONEY,
             })
         );
     }, [selectedVAT]);
@@ -164,7 +163,7 @@ const VATOverview: FunctionComponent = () => {
                         variant: ButtonVariant.TEXT_ONLY,
                     },
                 ],
-                iconType: IconType.AWARD,
+                iconType: IconType.MONEY,
             })
         );
     }, []);
@@ -204,7 +203,7 @@ const VATOverview: FunctionComponent = () => {
             <Row hasHorizontalCorrection>
                 <Column hasMarginBottom>
                     <PanelHeader
-                        iconType={IconType.AWARD}
+                        iconType={IconType.MONEY}
                         isLoading={isLoading}
                         options={
                             <PanelHeaderOptions>
@@ -229,7 +228,6 @@ const VATOverview: FunctionComponent = () => {
                                         variant={DropdownVariant.COMPACT}
                                     />
                                 </PanelHeaderOption>
-
                                 <PanelHeaderOption>
                                     <SelectionControl
                                         hasAlternativeTextStyle
