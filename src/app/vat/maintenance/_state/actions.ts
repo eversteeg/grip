@@ -88,7 +88,7 @@ export const getVAT =
     };
 
 export const getVATType =
-    (): ThunkResult =>
+    (hasOptionAll = false): ThunkResult =>
     (dispatch, getState): void => {
         const { locale } = getState().language;
         dispatch(setIsLoading(true));
@@ -104,6 +104,13 @@ export const getVATType =
                     dispatch(
                         setVATType(
                             apiResult.map((item) => {
+                                if (item.VATType === VATTypeEnum.ALL) {
+                                    return {
+                                        ...item,
+                                        Description: locale === Locale.EN ? 'All' : 'Alles',
+                                    };
+                                }
+
                                 if (item.VATType === VATTypeEnum.CLAIM) {
                                     return {
                                         ...item,
@@ -123,6 +130,7 @@ export const getVATType =
                     dispatch(setIsLoading(false));
                 },
                 entity: 'vat/maintenance/VATType',
+                parameters: { hasOptionAll },
             })
         );
     };

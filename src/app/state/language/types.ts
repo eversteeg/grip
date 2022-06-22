@@ -33,6 +33,7 @@ export interface Translations {
     Amount: string;
     AmountVAT: string;
     AppSettings: string;
+    Apply: string;
     ArticleNumber: string;
     BackToHome: string;
     Cancel: string;
@@ -54,6 +55,7 @@ export interface Translations {
     Description: string;
     DragFile: string;
     Email: string;
+    EndDate: string;
     Error404: string;
     Error404Text: string;
     ErrorInactivity: string;
@@ -91,7 +93,11 @@ export interface Translations {
     PasswordReset: string;
     PasswordResetText: string;
     Percentage: string;
+    Period: string;
+    Print: string;
+    PrintVATList: string;
     RememberLoginData: string;
+    Reset: string;
     ResetYourPassword: string;
     ResetYourPasswordText: string;
     ResultsOf: string;
@@ -102,6 +108,7 @@ export interface Translations {
     Show: string;
     ShowAll: string;
     Sort: string;
+    StartDate: string;
     Support: string;
     TermsOfUse: string;
     TooBigToUpload: string;

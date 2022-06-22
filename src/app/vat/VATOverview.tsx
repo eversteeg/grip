@@ -19,9 +19,12 @@ import { shallowEqual, useDispatch } from 'react-redux';
 import { VATItem, VATType } from '../../@types/vat/VATItem';
 import AddVATItemDialog from './components/addVATItemDialog/AddVATItemDialog';
 import { createTable } from '../utils/tableFunctions';
+import DialogPrint from './components/dialogPrint/DialogPrint';
 import { getTranslation } from '../utils/translationFunctions';
+import { HeaderButtonWrapper } from '../components/layouts/pageLayout/header/Header.sc';
 import LocalizedString from '../components/atoms/localizedString/LocalizedString';
 import { resetAllErrors } from '../state/error/actions';
+import { setHeaderContent } from '../state/global/actions';
 import Table from '../components/organisms/table/Table';
 import { tableColumnsVatItems } from './tableColumnsVatItems';
 import { Row as TableRow } from 'react-table';
@@ -32,6 +35,8 @@ import useSelector from '../state/useSelector';
 
 const VATOverview: FunctionComponent = () => {
     const dispatch = useDispatch();
+    const [isDialogPrintVisible, setIsDialogPrintVisible] = useState(false);
+    const headerContent = useSelector(({ global }) => global.headerContent);
     const theme = useContext(ThemeContext);
 
     const [dropdownOptions] = useState([
@@ -168,6 +173,33 @@ const VATOverview: FunctionComponent = () => {
         );
     }, []);
 
+    const closeDialogPrint = useCallback(() => {
+        setIsDialogPrintVisible(false);
+    }, []);
+
+    const openDialogPrint = useCallback(() => {
+        setIsDialogPrintVisible(true);
+    }, []);
+
+    useEffect(() => {
+        if (headerContent === undefined) {
+            dispatch(
+                setHeaderContent(
+                    <HeaderButtonWrapper>
+                        <Button
+                            iconType={IconType.FILEDOWNLOAD}
+                            isInverted
+                            onClick={openDialogPrint}
+                            size={ButtonSize.SMALL}
+                        >
+                            <LocalizedString value="Print" />
+                        </Button>
+                    </HeaderButtonWrapper>
+                )
+            );
+        }
+    }, [headerContent]);
+
     // Fetch initial data and every time showInactive has changed or a certificate is changed or added
     useEffect(() => {
         dispatch(getVATItems(isShowAll, vatType));
@@ -197,6 +229,15 @@ const VATOverview: FunctionComponent = () => {
             }
         }
     }, [isDialogVisible]);
+
+    useEffect(
+        () =>
+            // Reset the header content when unmounting
+            (): void => {
+                dispatch(setHeaderContent(undefined));
+            },
+        []
+    );
 
     return (
         <>
@@ -252,6 +293,7 @@ const VATOverview: FunctionComponent = () => {
                     />
                 </Column>
             </Row>
+            <DialogPrint isVisible={isDialogPrintVisible} onCancel={closeDialogPrint} />
         </>
     );
 };
