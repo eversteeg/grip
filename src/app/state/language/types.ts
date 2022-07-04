@@ -37,6 +37,7 @@ export interface Translations {
     ArticleNumber: string;
     BackToHome: string;
     Cancel: string;
+    CarTripOverview: string;
     Change: string;
     ChangePassword: string;
     ChangeVAT: string;
@@ -61,6 +62,7 @@ export interface Translations {
     ErrorInactivity: string;
     ErrorInvalidAmount: string;
     ErrorOAuthFailed: string;
+    ErrorReCaptchaVerifying: string;
     ErrorServerFailure: string;
     ErrorUnauthorizedCall: string;
     ErrorUnknown: string;

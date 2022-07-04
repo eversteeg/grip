@@ -7,6 +7,10 @@ export const EXTERNAL_ROUTES: ExternalRoutes = {
 };
 
 export interface Routes {
+    car: {
+        root: string;
+        tripOverview: string;
+    };
     error: {
         404: string;
     };
@@ -33,12 +37,17 @@ export interface Routes {
     };
 }
 
+const carRoot = '/car';
 const maintenanceRoot = '/club-maintenance';
 const organizationRoot = '/organization';
 const loginRoot = '/login';
 const vatRoot = '/vat';
 
 export const ROUTES: Routes = {
+    car: {
+        root: carRoot,
+        tripOverview: `${carRoot}/trip-overview`,
+    },
     error: {
         404: '/404',
     },

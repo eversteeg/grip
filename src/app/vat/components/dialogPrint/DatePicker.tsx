@@ -20,8 +20,6 @@ const DatePicker: FunctionComponent<DatePickerProps> = ({ parentContainer }) => 
     const [endDate, setEndDate] = useState(defaultEndDate);
     const [startDate, setStartDate] = useState(defaultStartDate);
 
-    console.log('********************* datepicker parent', parentContainer);
-
     const setDatesCallback = useCallback((newStartDate: Moment, newEndDate: Moment) => {
         const computedEndDate = newEndDate || newStartDate; // There are cases where the endDate is missing, set to startdate than
         setStartDate(newStartDate);
@@ -68,8 +66,7 @@ const DatePicker: FunctionComponent<DatePickerProps> = ({ parentContainer }) => 
             onConfirm={onConfirmCallback}
             onDatesChange={onDatesChangeCallback}
             onFocusChange={onFocusChangeCallback}
-            // TODO: in new version of ui-kit
-            // parentContainer={parentContainer}
+            parentContainer={parentContainer}
             startDate={startDate}
             startDateId={startDateId}
             startDatePlaceholderText={getTranslation('StartDate')}

@@ -8,9 +8,12 @@ import {
     SET_IS_PASSWORD_REQUESTED,
     SET_IS_PASSWORD_RESET,
     SET_IS_PERSIST_LOADING,
+    SET_IS_RECAPTCHA_TOKEN_VALID,
+    SET_IS_RECAPTCHA_TOKEN_VERIFIED,
     SET_IS_SETTINGS_LOADING,
     SET_IS_SETTINGS_REFRESH_REQUIRED,
     SET_IS_SETTINGS_SAVING,
+    SET_IS_VERIFYING_RECAPTCHA_TOKEN,
     SET_USER,
     SET_USER_SETTINGS,
     UserActionTypes,
@@ -26,9 +29,12 @@ const initialState: UserState = {
     isPasswordRequested: false,
     isPasswordReset: false,
     isPersistLoading: false,
+    isReCaptchaTokenValid: false,
+    isReCaptchaTokenVerified: false,
     isSettingsLoading: false,
     isSettingsRefreshRequired: false,
     isSettingsSaving: false,
+    isVerifyingReCaptchaToken: false,
     loginError: {} as UserState['loginError'],
     settings: {} as UserState['settings'],
     user: {} as UserState['user'],
@@ -83,6 +89,24 @@ export default (state = initialState, action: UserActionTypes): UserState => {
                 isPasswordReset: action.payload,
             };
 
+        case SET_IS_PERSIST_LOADING:
+            return {
+                ...state,
+                isPersistLoading: action.payload,
+            };
+
+        case SET_IS_RECAPTCHA_TOKEN_VALID:
+            return {
+                ...state,
+                isReCaptchaTokenValid: action.payload,
+            };
+
+        case SET_IS_RECAPTCHA_TOKEN_VERIFIED:
+            return {
+                ...state,
+                isReCaptchaTokenVerified: action.payload,
+            };
+
         case SET_IS_SETTINGS_LOADING:
             return {
                 ...state,
@@ -101,10 +125,10 @@ export default (state = initialState, action: UserActionTypes): UserState => {
                 isSettingsSaving: action.payload,
             };
 
-        case SET_IS_PERSIST_LOADING:
+        case SET_IS_VERIFYING_RECAPTCHA_TOKEN:
             return {
                 ...state,
-                isPersistLoading: action.payload,
+                isVerifyingReCaptchaToken: action.payload,
             };
 
         case SET_USER_SETTINGS:

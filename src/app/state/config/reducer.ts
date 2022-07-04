@@ -8,7 +8,6 @@ const initialState: ConfigState = {
     gripPassword: '',
     gripUsername: '',
     isLoading: true,
-    reCaptchaSiteKey: '',
     replyAddressGrip: '',
 };
 

@@ -36,7 +36,7 @@ const DialogPrint: FunctionComponent<DialogPrintProps> = ({ isVisible, onCancel 
     const isPrinting = false;
     const fileName = locale === Locale.EN ? 'vat-list.pdf' : 'btw-lijst.pdf';
 
-    const openInNewTab = (url) => {
+    const openInNewTab = (url: string) => {
         const newWindow = window.open(url, '_blank', 'noopener,noreferrer');
 
         if (newWindow) {

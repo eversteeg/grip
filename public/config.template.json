@@ -5,6 +5,5 @@
     "clientSecret": "something_difficult",
     "gripPassword": "string",
     "gripUsername": "string",
-    "reCaptchaSiteKey": "string",
     "replyAddressGrip": "string"
 }

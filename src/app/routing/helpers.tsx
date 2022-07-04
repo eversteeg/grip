@@ -3,6 +3,7 @@ import { ContentWidth, Route } from '../../@types/Route';
 import LocalizedString, { LocalizedStringProps } from '../components/atoms/localizedString/LocalizedString';
 import { NestedPrivateRouteChild, PrivateRoute } from '../../@types/PrivateRoute';
 import React, { ReactNode } from 'react';
+import CarTripOverview from '../car/CarTripOverview';
 import { IconType } from 'faralley-ui-kit';
 import { isNestedPrivateRoute } from '../utils/typeGuards/isNestedPrivateRoute';
 import LoginPage from '../user/login/LoginPage';
@@ -20,6 +21,17 @@ export const getPrivateRoutes = (): {
     privatePaths: string[];
     privateRoutes: PrivateRoute[];
 } => {
+    const carRoutes: PrivateRoute[] = [
+        {
+            component: <CarTripOverview />,
+            exact: true,
+            iconType: IconType.CAR,
+            layoutProps: { contentWidth: ContentWidth.DETAIL },
+            path: ROUTES.car.tripOverview,
+            text: 'CarTripOverview',
+        },
+    ];
+
     const maintenanceRoutes: PrivateRoute[] = [
         {
             children: [
@@ -73,6 +85,7 @@ export const getPrivateRoutes = (): {
             path: ROUTES.global.settings,
             text: 'Settings',
         },
+        ...carRoutes,
         ...vatRoutes,
         ...organizationRoutes,
         ...maintenanceRoutes,

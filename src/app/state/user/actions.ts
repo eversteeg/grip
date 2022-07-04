@@ -14,9 +14,12 @@ import {
     SET_IS_PASSWORD_REQUESTED,
     SET_IS_PASSWORD_RESET,
     SET_IS_PERSIST_LOADING,
+    SET_IS_RECAPTCHA_TOKEN_VALID,
+    SET_IS_RECAPTCHA_TOKEN_VERIFIED,
     SET_IS_SETTINGS_LOADING,
     SET_IS_SETTINGS_REFRESH_REQUIRED,
     SET_IS_SETTINGS_SAVING,
+    SET_IS_VERIFYING_RECAPTCHA_TOKEN,
     SET_LOGIN_ERROR,
     SET_USER,
     SET_USER_SETTINGS,
@@ -32,6 +35,8 @@ import { TokenInformation } from '../../../@types/user/TokenInformation';
 import { User } from '../../../@types/user/User';
 import { UserSettings } from '../../../@types/user/UserSettings';
 
+const VALID_SCORE_THRESHOLD = 0.5;
+
 interface APIResultAuthenticate {
     TokenInformation: TokenInformation;
     User: User;
@@ -43,6 +48,48 @@ interface APIResultUserSettings {
     propertyname: string;
     propertyvalue: string;
 }
+
+interface ReCaptchaResponse {
+    // eslint-disable-next-line camelcase
+    challenge_ts: Date;
+    'error-codes': [
+        {
+            error: string;
+        }
+    ];
+    hostname: string;
+    score: number;
+    success: boolean;
+}
+
+export const verifyReCaptchaToken =
+    (token: string): ThunkResult =>
+    (dispatch): void => {
+        dispatch(setIsReCaptchaTokenVerified(false));
+        dispatch(setIsReCaptchaTokenValid(false));
+        dispatch(setIsVerifyingReCaptchaToken(true));
+
+        dispatch(
+            backendRequest({
+                callbackError: (): void => {
+                    dispatch(setHasLoginError(true));
+                    dispatch(setIsVerifyingReCaptchaToken(false));
+                    dispatch(setIsLoading(false));
+                },
+                callbackSuccess: (response: ReCaptchaResponse): void => {
+                    const isValidResult: boolean =
+                        response.success && response.score !== undefined && response.score >= VALID_SCORE_THRESHOLD;
+
+                    dispatch(setIsReCaptchaTokenValid(isValidResult));
+                    dispatch(setIsReCaptchaTokenVerified(true));
+                    dispatch(setIsVerifyingReCaptchaToken(isValidResult)); // If result is valid, then leave this so it can be unset after authentication
+                },
+                entity: 'account/token/VerifyReCaptcha',
+                isPublic: true,
+                parameters: { token },
+            })
+        );
+    };
 
 export const authenticateUser =
     (username: string, password: string): ThunkResult =>
@@ -60,6 +107,7 @@ export const authenticateUser =
                 },
                 callbackError: (): void => {
                     dispatch(setHasLoginError(true));
+                    dispatch(setIsVerifyingReCaptchaToken(false));
                     dispatch(setIsLoading(false));
                 },
                 callbackSuccess: ({ error, hasError, result }: APIResult): void => {
@@ -85,6 +133,7 @@ export const authenticateUser =
                         dispatch(loginUser(apiResult.User));
                     }
 
+                    dispatch(setIsVerifyingReCaptchaToken(false));
                     dispatch(setIsLoading(false));
                 },
                 entity: 'account/Authenticate',
@@ -363,6 +412,16 @@ export const setIsPersistLoading = (isPersistLoading: boolean): UserActionTypes 
     type: SET_IS_PERSIST_LOADING,
 });
 
+export const setIsReCaptchaTokenValid = (isValid: boolean): UserActionTypes => ({
+    payload: isValid,
+    type: SET_IS_RECAPTCHA_TOKEN_VALID,
+});
+
+export const setIsReCaptchaTokenVerified = (isReCaptchaTokenVerified: boolean): UserActionTypes => ({
+    payload: isReCaptchaTokenVerified,
+    type: SET_IS_RECAPTCHA_TOKEN_VERIFIED,
+});
+
 export const setIsSettingsLoading = (isLoading: boolean): UserActionTypes => ({
     payload: isLoading,
     type: SET_IS_SETTINGS_LOADING,
@@ -376,6 +435,11 @@ export const setIsSettingRefreshRequired = (isRefreshRequired: boolean): UserAct
 export const setIsSettingsSaving = (isSaving: boolean): UserActionTypes => ({
     payload: isSaving,
     type: SET_IS_SETTINGS_SAVING,
+});
+
+export const setIsVerifyingReCaptchaToken = (isVerifying: boolean): UserActionTypes => ({
+    payload: isVerifying,
+    type: SET_IS_VERIFYING_RECAPTCHA_TOKEN,
 });
 
 export const setLoginErrorObject = (errorObject: ErrorObject): UserActionTypes => ({
