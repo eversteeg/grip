@@ -1,9 +1,10 @@
-import { ModalProps } from 'faralley-ui-kit'; // For now, we can reuse the sidepanel props
+import { ModalProps } from 'faralley-ui-kit';
 import { ReactNode } from 'react';
 
 export interface Modal extends Omit<ModalProps, 'isVisible'> {}
 
 export interface ModalState {
+    maxBodyHeight: string | undefined;
     modalChildren: ReactNode;
     modalProps: ModalProps;
 }
@@ -12,6 +13,13 @@ export const CLOSE_MODAL = 'modal.CLOSE_MODAL';
 
 interface CloseModalAction {
     type: typeof CLOSE_MODAL;
+}
+
+export const MAX_BODY_HEIGHT = 'modal.MAX_BODY_HEIGHT';
+
+interface MaxBodyHeightAction {
+    payload: string;
+    type: typeof MAX_BODY_HEIGHT;
 }
 
 export const OPEN_MODAL = 'modal.OPEN_MODAL';
@@ -35,4 +43,9 @@ interface SetModalChildrenAction {
     type: typeof SET_MODAL_CHILDREN;
 }
 
-export type ModalActionTypes = OpenModalAction | CloseModalAction | SetModalOptionsAction | SetModalChildrenAction;
+export type ModalActionTypes =
+    | MaxBodyHeightAction
+    | OpenModalAction
+    | CloseModalAction
+    | SetModalOptionsAction
+    | SetModalChildrenAction;

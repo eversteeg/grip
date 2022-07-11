@@ -166,7 +166,7 @@ const LoginForm: FunctionComponent = () => {
                     />
                 </FormElementWrapper>
             </CardBase>
-            {isLoggedIn && <Redirect to={ROUTES.vat.vatOverview} />}
+            {isLoggedIn && <Redirect to={ROUTES.car.tripOverview} />}
         </>
     );
 };

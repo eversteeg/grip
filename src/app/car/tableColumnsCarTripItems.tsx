@@ -1,76 +1,69 @@
-import {
-    Alignment,
-    ButtonIcon,
-    IconType,
-    Status,
-    StatusCell,
-    TableColumnActionButtonProps,
-    Theme,
-} from 'faralley-ui-kit';
+import { Alignment, IconType, Status, StatusCell, TableColumnActionButtonProps, Theme } from 'faralley-ui-kit';
 import React, { ReactNode } from 'react';
+import { CarTripItem } from '../../@types/car/CarTripItem';
 import { Column } from 'react-table';
 import { columnWidths } from '../styles/constants';
 import ContentCell from '../components/tableCells/contentCell/ContentCell';
 import LocalizedString from '../components/atoms/localizedString/LocalizedString';
-import { VATItem } from '../../@types/vat/VATItem';
 
-export const tableColumnsVatItems = (
+export const tableColumnsCarTripItems = (
     theme: Theme,
-    onDelete: (vat: VATItem) => void,
-    onEdit: (vat: VATItem) => void
-): Column<VATItem>[] => [
+    onDelete: (carTrip: CarTripItem) => void,
+    onEdit: (carTrip: CarTripItem) => void
+): Column<CarTripItem>[] => [
     {
         Cell: (): ReactNode => (
             <StatusCell icon={IconType.ROUND_CHECK} iconColor={theme.colorDisabled} status={Status.DISABLED} />
         ),
-        accessor: 'VATId',
+        accessor: 'TripId',
         disableSortBy: true,
         hasCellPadding: false,
         width: columnWidths.status,
     },
     {
         Cell: ({ value }): ReactNode => <ContentCell value={value} />,
-        Header: <LocalizedString value="VATDate" />,
-        accessor: 'VATDate',
+        Header: <LocalizedString value="TripDate" />,
+        accessor: 'TripDate',
         width: columnWidths.date,
     },
     {
         Cell: ({ value }): ReactNode => <ContentCell value={value} />,
-        Header: <LocalizedString value="Type" />,
-        accessor: 'VATTypeDescription',
+        Header: <LocalizedString value="Departure" />,
+        accessor: 'Departure',
     },
     {
         Cell: ({ value }): ReactNode => <ContentCell value={value} />,
-        Header: <LocalizedString value="Description" />,
-        accessor: 'Description',
-    },
-    {
-        Cell: ({ value }): ReactNode => <ContentCell isCurrency value={value} />,
-        Header: <LocalizedString value="Amount" />,
-        accessor: 'Amount',
-        width: columnWidths.amount,
-    },
-    {
-        Cell: ({ value }): ReactNode => <ContentCell isCurrency value={value} />,
-        Header: <LocalizedString value="AmountVAT" />,
-        accessor: 'AmountVAT',
-        width: columnWidths.amount,
+        Header: <LocalizedString value="Destination" />,
+        accessor: 'Destination',
     },
     {
         Cell: ({ value }): ReactNode => <ContentCell value={value} />,
-        Header: <LocalizedString value="Percentage" />,
-        accessor: 'VATDescription',
+        Header: <LocalizedString value="TripGoal" />,
+        accessor: 'TripGoal',
     },
     {
         Cell: ({ value }): ReactNode => <ContentCell value={value} />,
-        Header: <LocalizedString value="Organization" />,
-        accessor: 'OrganizationName',
+        Header: <LocalizedString value="Distance" />,
+        accessor: 'Distance',
+        width: columnWidths.size120,
+    },
+    {
+        Cell: ({ value }): ReactNode => <ContentCell value={value} />,
+        Header: <LocalizedString value="LicensePlate" />,
+        accessor: 'LicensePlate',
+        width: columnWidths.size120,
+    },
+    {
+        Cell: ({ value }): ReactNode => <ContentCell value={value} />,
+        Header: <LocalizedString value="MilageStart" />,
+        accessor: 'MilageStart',
+        width: columnWidths.size120,
     },
     {
         Cell: (): ReactNode => <div />,
         accessor: 'IsDeleteAllowed',
         actionButtons: (row) => {
-            const buttonProps: TableColumnActionButtonProps<VATItem>[] = [];
+            const buttonProps: TableColumnActionButtonProps<CarTripItem>[] = [];
 
             if (row.original.IsEditAllowed) {
                 buttonProps.push({
@@ -102,4 +95,4 @@ export const tableColumnsVatItems = (
     },
 ];
 
-export default tableColumnsVatItems;
+export default tableColumnsCarTripItems;

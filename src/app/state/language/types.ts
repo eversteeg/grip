@@ -24,6 +24,8 @@ export type Locales = typeof Locale['EN'] | typeof Locale['NL'];
 
 export interface Translations {
     Add: string;
+    AddAndClose: string;
+    AddCarTrip: string;
     AddDescription: string;
     AddDescriptionOptional: string;
     AddFile: string;
@@ -37,7 +39,9 @@ export interface Translations {
     ArticleNumber: string;
     BackToHome: string;
     Cancel: string;
+    Car: string;
     CarTripOverview: string;
+    CarTrips: string;
     Change: string;
     ChangePassword: string;
     ChangeVAT: string;
@@ -53,7 +57,10 @@ export interface Translations {
     DateFormatXLong: string;
     Delete: string;
     DeleteHistoryData: string;
+    Departure: string;
     Description: string;
+    Destination: string;
+    Distance: string;
     DragFile: string;
     Email: string;
     EndDate: string;
@@ -69,6 +76,7 @@ export interface Translations {
     ErrorUpdatePasswordNotEqual: string;
     ForgotPassword: string;
     ForgotPasswordText: string;
+    From: string;
     GenericErrorMessageEmail: string;
     GenericErrorMessageRequired: string;
     GenericErrorMessageTelephone: string;
@@ -77,9 +85,11 @@ export interface Translations {
     GoToLoginPage: string;
     GoToPage: string;
     Language: string;
+    LicensePlate: string;
     Login: string;
     Logout: string;
     Maintenance: string;
+    MilageStart: string;
     NewPassword: string;
     NewPasswordRepeat: string;
     NewPasswordText: string;
@@ -115,6 +125,8 @@ export interface Translations {
     TermsOfUse: string;
     TooBigToUpload: string;
     TooLongFileName: string;
+    TripDate: string;
+    TripGoal: string;
     Type: string;
     Unknown: string;
     UnsavedChangesAlert: string;

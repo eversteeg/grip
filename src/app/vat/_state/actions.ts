@@ -8,14 +8,10 @@ import {
     VATActionTypes,
 } from './types';
 import { VATItem, VATType } from '../../../@types/vat/VATItem';
+import { APIDelete } from '../../../@types/APIDelete';
 import { APIResult } from '../../../@types/APIResult';
 import { backendRequest } from '../../state/entity/actions';
 import { ThunkResult } from '../../state/store';
-
-interface APIDelete {
-    data: { vatId: number };
-    isSuccess: boolean;
-}
 
 export const addVATItem =
     (vatItem: VATItem): ThunkResult =>

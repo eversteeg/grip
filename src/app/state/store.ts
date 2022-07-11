@@ -1,5 +1,6 @@
 import { Action, applyMiddleware, combineReducers, createStore } from 'redux';
 import thunk, { ThunkAction } from 'redux-thunk';
+import car from '../car/_state/reducer';
 import config from './config/reducer';
 import { createLogger } from 'redux-logger';
 import dialog from './dialog/reducer';
@@ -16,6 +17,7 @@ import vat from '../vat/_state/reducer';
 import vatMaintenance from '../vat/maintenance/_state/reducer';
 
 const rootReducer = combineReducers({
+    car,
     config,
     dialog,
     entity,

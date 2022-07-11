@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import { ContentWrapper, OverlayWrapper, StyledPageLayout } from './PageLayout.sc';
+import { ContentWrapper, ModalWrapper, OverlayWrapper, StyledPageLayout } from './PageLayout.sc';
 import { Dialog, Modal, Overlay, SidePanel } from 'faralley-ui-kit';
 import React, { FunctionComponent, ReactNode, useCallback, useEffect, useState } from 'react';
 import { setIsResetScrollingRequired, setIsSidebarVisible } from '../../../state/global/actions';
@@ -28,6 +28,7 @@ const PageLayout: FunctionComponent<PageLayoutProps> = ({ children, contentWidth
     const isModalVisible = useSelector(({ modal }) => modal.modalProps.isVisible);
     const isSidebarVisible = useSelector(({ global }) => global.isSidebarVisible);
     const isSidePanelVisible = useSelector(({ sidePanel }) => sidePanel.sidePanelProps.isVisible);
+    const maxBodyHeight = useSelector(({ modal }) => modal.maxBodyHeight);
     const modalProps = useSelector(({ modal }) => modal.modalProps, shallowEqual);
     const modalChildren = useSelector(({ modal }) => modal.modalChildren);
     const sidePanelProps = useSelector(({ sidePanel }) => sidePanel.sidePanelProps, shallowEqual);
@@ -107,7 +108,9 @@ const PageLayout: FunctionComponent<PageLayoutProps> = ({ children, contentWidth
                         {children}
                     </Content>
                 </ContentWrapper>
-                <Modal {...modalProps}>{modalChildren}</Modal>
+                <ModalWrapper maxBodyHeight={maxBodyHeight}>
+                    <Modal {...modalProps}>{modalChildren}</Modal>
+                </ModalWrapper>
                 <SidePanel {...sidePanelProps}>{sidePanelChildren}</SidePanel>
                 <OverlayWrapper isSidePanelType={isSidePanelVisible}>
                     <Overlay isVisible={isSidePanelVisible || isSidebarVisible} onClick={closeAllCallback} />

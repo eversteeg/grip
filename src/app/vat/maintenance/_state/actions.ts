@@ -8,6 +8,7 @@ import {
     SET_VATTYPE,
     VATMaintenanceActionTypes,
 } from './types';
+import { APIDelete } from '../../../../@types/APIDelete';
 import { APIResult } from '../../../../@types/APIResult';
 import { backendRequest } from '../../../state/entity/actions';
 import { Locale } from 'faralley-ui-kit';
@@ -15,11 +16,6 @@ import { ThunkResult } from '../../../state/store';
 import { VAT } from '../../../../@types/vat/VAT';
 import { VATType } from '../../../../@types/vat/VATType';
 import { VATType as VATTypeEnum } from '../../../../@types/vat/VATItem';
-
-interface APIDelete {
-    data: { vatId: number };
-    isSuccess: boolean;
-}
 
 export const addVAT =
     (percentage: number, description: string): ThunkResult =>

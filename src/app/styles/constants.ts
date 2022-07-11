@@ -36,6 +36,7 @@ export const columnWidths = {
 };
 
 export const maxInputLengths = {
+    chars100: 100,
     chars1024: 1024,
     chars128: 128,
     chars22: 22,

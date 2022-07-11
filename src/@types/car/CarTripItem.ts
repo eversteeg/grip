@@ -1,11 +1,19 @@
-export interface CarTripItem {
+import { Moment } from 'moment';
+
+export interface BaseCarTripItem {
     CarId: number;
     Departure: string;
     Destination: string;
     Distance: number;
-    LicensePlate: string;
     MilageStart: number;
-    TripDate: Date;
+    TripDate: Moment | Date;
     TripGoal: string;
+}
+
+export interface CarTripItem extends BaseCarTripItem {
+    IsDeleteAllowed: boolean;
+    IsEditAllowed: boolean;
+    LicensePlate: string;
+    TripDate: Date;
     TripId: number;
 }

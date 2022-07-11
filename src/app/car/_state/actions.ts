@@ -1,45 +1,48 @@
 /* eslint-disable @typescript-eslint/no-use-before-define */
+import { BaseCarTripItem, CarTripItem } from '../../../@types/car/CarTripItem';
 import {
-    SET_IS_ADD_VAT_ITEM_ALLOWED,
+    CarActionTypes,
+    SET_CAR_TRIP_ITEMS,
+    SET_CARS,
+    SET_DEFAULT_CAR_ID,
+    SET_DEFAULT_STARTING_POINT,
+    SET_IS_ADD_CAR_ALLOWED,
+    SET_IS_ADD_CAR_TRIP_ITEM_ALLOWED,
+    SET_IS_CAR_TRIP_ITEM_MODAL_VISIBLE,
+    SET_IS_CAR_TRIP_ITEMS_REFRESH_REQUIRED,
     SET_IS_LOADING,
     SET_IS_SAVING,
-    SET_IS_VAT_ITEMS_REFRESH_REQUIRED,
-    SET_VAT_ITEMS,
-    VATActionTypes,
 } from './types';
-import { VATItem, VATType } from '../../../@types/vat/VATItem';
+import { APIDelete } from '../../../@types/APIDelete';
 import { APIResult } from '../../../@types/APIResult';
 import { backendRequest } from '../../state/entity/actions';
+import { Car } from '../../../@types/car/Car';
 import { ThunkResult } from '../../state/store';
+import { toNumber } from 'faralley-ui-kit';
 
-interface APIDelete {
-    data: { vatId: number };
-    isSuccess: boolean;
-}
-
-export const addVATItem =
-    (vatItem: VATItem): ThunkResult =>
+export const addCarTripItem =
+    (carTrip: BaseCarTripItem): ThunkResult =>
     (dispatch): void => {
         dispatch(setIsSaving(true));
 
         dispatch(
             backendRequest({
-                body: { ...vatItem },
+                body: { ...carTrip },
                 callbackError: (): void => {
                     dispatch(setIsSaving(false));
                 },
                 callbackSuccess: ({ hasError }: APIResult): void => {
-                    dispatch(setIsVATItemsRefreshRequired(!hasError));
+                    dispatch(setIsCarTripsRefreshRequired(!hasError));
                     dispatch(setIsSaving(false));
                 },
-                entity: 'vat/AddVATItem',
+                entity: 'car/AddCarTripItem',
                 method: 'POST',
             })
         );
     };
 
-export const deleteVATItem =
-    (VATItemId: number): ThunkResult =>
+export const deleteCarTripItem =
+    (tripId: number): ThunkResult =>
     (dispatch): void => {
         dispatch(setIsSaving(true));
 
@@ -50,45 +53,22 @@ export const deleteVATItem =
                 },
                 callbackSuccess: ({ result }: APIResult): void => {
                     const apiResult: APIDelete = result as APIDelete;
-                    dispatch(setIsVATItemsRefreshRequired(apiResult.isSuccess));
+                    dispatch(setIsCarTripsRefreshRequired(apiResult.isSuccess));
                     dispatch(setIsSaving(false));
                 },
-                entity: 'vat/DeleteVATItem',
+                entity: 'car/DeleteCarTripItem',
                 method: 'DELETE',
-                parameters: { vatitemid: VATItemId },
+                parameters: { tripid: tripId },
             })
         );
     };
 
-// export const getVATItem =
-//     (): ThunkResult =>
-//     (dispatch): void => {
-//         dispatch(setIsLoading(true));
-//         dispatch(setIsAddVATItemAllowed(false));
-//         dispatch(setIsVATItemsRefreshRequired(false));
-
-//         dispatch(
-//             backendRequest({
-//                 callbackError: (): void => {
-//                     dispatch(setIsLoading(false));
-//                 },
-//                 callbackSuccess: ({ result }: APIResult): void => {
-//                     const apiResult: VATItem = result.data as VATItem;
-//                     dispatch(setVATItem(apiResult));
-//                     dispatch(setIsAddVATItemAllowed(result.IsAddAllowed || false));
-//                     dispatch(setIsLoading(false));
-//                 },
-//                 entity: 'vat/VATItem',
-//             })
-//         );
-//     };
-
-export const getVATItems =
-    (isShowAll = false, vatType = VATType.ALL): ThunkResult =>
+export const getCarTripItems =
+    (datefrom: string): ThunkResult =>
     (dispatch): void => {
         dispatch(setIsLoading(true));
-        dispatch(setIsAddVATItemAllowed(false));
-        dispatch(setIsVATItemsRefreshRequired(false));
+        dispatch(setIsAddCarTripAllowed(false));
+        dispatch(setIsCarTripsRefreshRequired(false));
 
         dispatch(
             backendRequest({
@@ -96,63 +76,166 @@ export const getVATItems =
                     dispatch(setIsLoading(false));
                 },
                 callbackSuccess: ({ result }: APIResult): void => {
-                    const apiResult: VATItem[] = result.data as VATItem[];
-                    dispatch(setVATItems(apiResult));
-                    dispatch(setIsAddVATItemAllowed(result.IsAddAllowed || false));
+                    const apiResult: CarTripItem[] = result.data as CarTripItem[];
+                    dispatch(setCarTripItems(apiResult));
+                    dispatch(setIsAddCarTripAllowed(result.IsAddAllowed || false));
                     dispatch(setIsLoading(false));
                 },
-                entity: 'vat/VATItems',
+                entity: 'car/CarTripItems',
                 parameters: {
-                    datefrom: isShowAll ? '1900-01-01' : '', // when absent, falls back to backend default
-                    fetchclaim: (vatType === VATType.ALL || vatType === VATType.CLAIM).toString(),
-                    fetchconvey: (vatType === VATType.ALL || vatType === VATType.CONVEY).toString(),
+                    datefrom,
                 },
             })
         );
     };
 
-export const updateVATItem =
-    (vatItem: VATItem): ThunkResult =>
+export const getCars =
+    (activeOnly = true): ThunkResult =>
     (dispatch): void => {
-        dispatch(setIsSaving(true));
+        dispatch(setIsLoading(true));
 
         dispatch(
             backendRequest({
-                body: { ...vatItem },
                 callbackError: (): void => {
-                    dispatch(setIsSaving(false));
+                    dispatch(setIsLoading(false));
                 },
-                callbackSuccess: ({ hasError }: APIResult): void => {
-                    dispatch(setIsVATItemsRefreshRequired(!hasError));
-                    dispatch(setIsSaving(false));
+                callbackSuccess: ({ result }: APIResult): void => {
+                    const apiResult: Car[] = result.data as Car[];
+                    dispatch(setCars(apiResult));
+                    dispatch(setIsAddCarAllowed(result.IsAddAllowed || false));
+                    dispatch(setIsLoading(false));
                 },
-                entity: 'vat/UpdateVATItem',
-                method: 'PUT',
+                entity: 'car/CarItems',
+                parameters: {
+                    activeonly: activeOnly,
+                },
             })
         );
     };
 
-export const setIsAddVATItemAllowed = (isAllowed: boolean): VATActionTypes => ({
-    payload: isAllowed,
-    type: SET_IS_ADD_VAT_ITEM_ALLOWED,
+export const getDefaultCarId =
+    (): ThunkResult =>
+    (dispatch): void => {
+        dispatch(setIsLoading(true));
+
+        interface APIResultDefaultCarId extends APIResult {
+            result: {
+                data: {
+                    carid: string;
+                };
+            };
+        }
+
+        dispatch(
+            backendRequest({
+                callbackError: (): void => {
+                    dispatch(setIsLoading(false));
+                },
+                callbackSuccess: ({ result }: APIResultDefaultCarId): void => {
+                    const apiResult: number = toNumber(result.data.carid);
+                    dispatch(setDefaultCarId(apiResult));
+                    dispatch(setIsLoading(false));
+                },
+                entity: 'car/DefaultCarId',
+            })
+        );
+    };
+
+export const getDefaultStartingPoint =
+    (): ThunkResult =>
+    (dispatch): void => {
+        dispatch(setIsLoading(true));
+
+        interface APIResultDefaultStartingPoint extends APIResult {
+            result: {
+                data: {
+                    startingpoint: string;
+                };
+            };
+        }
+
+        dispatch(
+            backendRequest({
+                callbackError: (): void => {
+                    dispatch(setIsLoading(false));
+                },
+                callbackSuccess: ({ result }: APIResultDefaultStartingPoint): void => {
+                    const apiResult: string = result.data.startingpoint;
+                    dispatch(setDefaultStartingPoint(apiResult));
+                    dispatch(setIsLoading(false));
+                },
+                entity: 'car/DefaultStartingPoint',
+            })
+        );
+    };
+
+// export const updateVATItem =
+//     (vatItem: VATItem): ThunkResult =>
+//     (dispatch): void => {
+//         dispatch(setIsSaving(true));
+
+//         dispatch(
+//             backendRequest({
+//                 body: { ...vatItem },
+//                 callbackError: (): void => {
+//                     dispatch(setIsSaving(false));
+//                 },
+//                 callbackSuccess: ({ hasError }: APIResult): void => {
+//                     dispatch(setIsCarTripsRefreshRequired(!hasError));
+//                     dispatch(setIsSaving(false));
+//                 },
+//                 entity: 'vat/UpdateVATItem',
+//                 method: 'PUT',
+//             })
+//         );
+//     };
+
+export const setCarTripItems = (items: CarTripItem[]): CarActionTypes => ({
+    payload: items,
+    type: SET_CAR_TRIP_ITEMS,
 });
 
-export const setIsLoading = (isLoading: boolean): VATActionTypes => ({
+export const setCars = (items: Car[]): CarActionTypes => ({
+    payload: items,
+    type: SET_CARS,
+});
+
+export const setDefaultCarId = (defaultCarId: number): CarActionTypes => ({
+    payload: defaultCarId,
+    type: SET_DEFAULT_CAR_ID,
+});
+
+export const setDefaultStartingPoint = (defaultStartingPoint: string): CarActionTypes => ({
+    payload: defaultStartingPoint,
+    type: SET_DEFAULT_STARTING_POINT,
+});
+
+export const setIsAddCarAllowed = (isAllowed: boolean): CarActionTypes => ({
+    payload: isAllowed,
+    type: SET_IS_ADD_CAR_ALLOWED,
+});
+
+export const setIsAddCarTripAllowed = (isAllowed: boolean): CarActionTypes => ({
+    payload: isAllowed,
+    type: SET_IS_ADD_CAR_TRIP_ITEM_ALLOWED,
+});
+
+export const setIsCarTripModalVisible = (isVisible: boolean): CarActionTypes => ({
+    payload: isVisible,
+    type: SET_IS_CAR_TRIP_ITEM_MODAL_VISIBLE,
+});
+
+export const setIsCarTripsRefreshRequired = (isRefreshRequired: boolean): CarActionTypes => ({
+    payload: isRefreshRequired,
+    type: SET_IS_CAR_TRIP_ITEMS_REFRESH_REQUIRED,
+});
+
+export const setIsLoading = (isLoading: boolean): CarActionTypes => ({
     payload: isLoading,
     type: SET_IS_LOADING,
 });
 
-export const setIsSaving = (isSaving: boolean): VATActionTypes => ({
+export const setIsSaving = (isSaving: boolean): CarActionTypes => ({
     payload: isSaving,
     type: SET_IS_SAVING,
-});
-
-export const setIsVATItemsRefreshRequired = (isRefreshRequired: boolean): VATActionTypes => ({
-    payload: isRefreshRequired,
-    type: SET_IS_VAT_ITEMS_REFRESH_REQUIRED,
-});
-
-export const setVATItems = (vatItems: VATItem[]): VATActionTypes => ({
-    payload: vatItems,
-    type: SET_VAT_ITEMS,
 });

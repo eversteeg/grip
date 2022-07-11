@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/restrict-plus-operands */
 import { customMedia, menuBarHeight, pageLayout, sideBarWidth, ZIndex } from '../../../styles/constants';
 import styled, { css, SimpleInterpolation } from 'styled-components';
+import { isEmpty } from 'faralley-ui-kit';
 
 interface StyledPageLayoutProps {
     blockScrolling: boolean;
@@ -68,4 +69,18 @@ export const ContentWrapper = styled.div<ContentWrapperProps>`
         padding-right:${pageLayout.sidePaddingLarge}px;
         padding-left: ${pageLayout.sidePaddingLarge}px;
     `}
+`;
+
+interface ModalWrapperProps {
+    maxBodyHeight: string | undefined;
+}
+
+export const ModalWrapper = styled.div<ModalWrapperProps>`
+    ${({ maxBodyHeight }): SimpleInterpolation =>
+        !isEmpty(maxBodyHeight) &&
+        css`
+            div:nth-child(2) {
+                max-height: ${maxBodyHeight};
+            }
+        `}
 `;
