@@ -1,9 +1,9 @@
-import { Table as KTable, TableSkeleton } from 'faralley-ui-kit';
+import { createLocalizedPagingTexts, createLocalizedTableTexts } from '../../../utils/tableFunctions';
+import { Table as KTable, Paginator, TableSkeleton } from 'faralley-ui-kit';
 import React, { FunctionComponent, ReactNode, SyntheticEvent } from 'react';
 import { Row, TableInstance, TableState } from 'react-table';
-import { createLocalizedTableTexts } from '../../../utils/tableFunctions';
+import { TABLE_DEFAULT_PAGE_SIZE, TABLE_NR_OF_ROWS_SMALL } from '../../../globals/constants';
 import { getTranslation } from '../../../utils/translationFunctions';
-import { NR_OF_TABLE_ROWS_SMALL } from '../../../globals/constants';
 
 interface TableProps {
     footer?: ReactNode;
@@ -25,13 +25,16 @@ const Table: FunctionComponent<TableProps> = ({
     isDisabled = false,
     isLoading = false,
     noResultMessage = null,
-    numberOfRowsPerTable = NR_OF_TABLE_ROWS_SMALL,
+    numberOfRowsPerTable = TABLE_NR_OF_ROWS_SMALL,
     onClickRow,
     paginator = undefined,
     showRowsInCard = false,
 }) => {
     const noResultMessageText = noResultMessage || getTranslation('NoDataKnown');
     const tableTexts = createLocalizedTableTexts();
+    const paginatorTexts = createLocalizedPagingTexts();
+    const defaultPaginator = <Paginator hasPageSizeSelector={false} instance={instance} texts={paginatorTexts} />;
+    const tablePaginator = paginator || (instance.data.length > TABLE_DEFAULT_PAGE_SIZE ? defaultPaginator : undefined);
 
     return isLoading ? (
         <TableSkeleton numberOfRowsPerTable={numberOfRowsPerTable} showRowsInCard={showRowsInCard} />
@@ -42,7 +45,7 @@ const Table: FunctionComponent<TableProps> = ({
             isDisabled={isDisabled}
             noResults={noResultMessageText}
             onClickRow={onClickRow}
-            paginator={paginator}
+            paginator={tablePaginator}
             texts={tableTexts}
         />
     );

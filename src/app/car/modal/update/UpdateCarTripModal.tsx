@@ -1,11 +1,4 @@
 import {
-    addCarTripItem,
-    getCars,
-    getDefaultCarId,
-    getDefaultStartingPoint,
-    setIsCarTripModalVisible,
-} from '../_state/actions';
-import {
     Button,
     ButtonSize,
     ButtonVariant,
@@ -20,65 +13,40 @@ import {
     ModalSize,
     selectOptionsFacade,
     toMoment,
-    toNumber,
 } from 'faralley-ui-kit';
-import { closeModal, openModal, setModalOptions } from '../../state/modal/actions';
-import { EMPTY_DISPLAY_VALUE_SELECTION, EMPTY_VALUE_SELECTION } from '../../globals/constants';
+import { closeModal, openModal, setModalOptions } from '../../../state/modal/actions';
+import { getCars, setIsCarTripModalVisible, updateCarTripItem } from '../../_state/actions';
+import { getSelectedCar, isValidInput } from '../modalFunctions';
 import moment, { Moment } from 'moment';
 import React, { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react';
 import { shallowEqual, useDispatch } from 'react-redux';
-import { BaseCarTripItem } from '../../../@types/car/CarTripItem';
-import { Car } from '../../../@types/car/Car';
-import GenericEditableInformation from '../../components/molecules/genericEditableInformation/GenericEditableInformation';
-import { getViolationTexts } from '../../utils/violationFunctions';
-import LocalizedString from '../../components/atoms/localizedString/LocalizedString';
-import { maxInputLengths } from '../../styles/constants';
-import { StyledCarTripModal } from './AddCarTripModal.sc';
-import useSelector from '../../state/useSelector';
-import { ViolationList } from '../../components/atoms/violationList/ViolationList.sc';
+import { Car } from '../../../../@types/car/Car';
+import { CarTripItem } from '../../../../@types/car/CarTripItem';
+import GenericEditableInformation from '../../../components/molecules/genericEditableInformation/GenericEditableInformation';
+import { getTranslation } from '../../../utils/translationFunctions';
+import { getViolationTexts } from '../../../utils/violationFunctions';
+import LocalizedString from '../../../components/atoms/localizedString/LocalizedString';
+import { maxInputLengths } from '../../../styles/constants';
+import { StyledCarTripModal } from '../CarTripModal.sc';
+import useSelector from '../../../state/useSelector';
+import { ViolationList } from '../../../components/atoms/violationList/ViolationList.sc';
 
-const getSelectedCar = (cars: Car[], carId: number, returnFirstCar = false): Car => {
-    const foundCar = cars.find((item) => toNumber(item.CarId.toString()) === toNumber(carId.toString()));
+export interface UpdateCarTripModalProps {
+    currentCarTrip: CarTripItem;
+}
 
-    if (foundCar) {
-        return foundCar;
-    }
-
-    return returnFirstCar ? cars[0] : ({} as Car);
-};
-
-const AddCarTripModal: FunctionComponent = () => {
+const UpdateCarTripModal: FunctionComponent<UpdateCarTripModalProps> = ({ currentCarTrip }) => {
     const dispatch = useDispatch();
     const genericErrorMessages = useSelector(({ language }) => language.genericErrorMessages);
     const [carItems, setCarItems] = useState([] as Array<Car>);
     const [selectedCar, setSelectedCar] = useState<Car>({} as Car);
-    const isOutsideRange = (day: Moment): boolean => day.isAfter(moment(), 'day');
-
-    const { cars, defaultCarId, defaultStartingPoint, isCarTripsRefreshRequired, isLoading, isSaving } = useSelector(
-        ({ car }) => car,
-        shallowEqual
-    );
-
+    const isOutsideRange = (day: Moment): boolean => day.isAfter(moment(), 'day'); // Only allow dates in the past
+    const { cars, isCarTripsRefreshRequired, isLoading, isSaving } = useSelector(({ car }) => car, shallowEqual);
     const violations = useSelector(({ error }) => error.error);
     const hasAllPickLists = !isEmpty(carItems);
-
-    const [details, setDetails] = useState<BaseCarTripItem>({
-        CarId: defaultCarId,
-        Departure: defaultStartingPoint,
-        Destination: EMPTY_DISPLAY_VALUE_SELECTION,
-        Distance: 1,
-        MilageStart: selectedCar && selectedCar.MilageStart ? selectedCar.MilageStart : 0, // Will be set after setting selected car
-        TripDate: moment(),
-        TripGoal: EMPTY_DISPLAY_VALUE_SELECTION,
-    });
-
-    const hasValidInput =
-        !isEmpty(details.Departure) &&
-        !isEmpty(details.Destination) &&
-        !isEmpty(details.TripGoal) &&
-        !isEmpty(details.Distance) &&
-        details.Distance !== 0 &&
-        details.CarId !== EMPTY_VALUE_SELECTION;
+    const [details, setDetails] = useState<CarTripItem>(currentCarTrip);
+    const hasValidInput = isValidInput(details);
+    const notEditableWarning = getTranslation('EditDistanceNotAllowed');
 
     const onCloseModalCallback = useCallback(() => {
         dispatch(setIsCarTripModalVisible(false));
@@ -90,7 +58,7 @@ const AddCarTripModal: FunctionComponent = () => {
             openModal({
                 onBack: onCloseModalCallback,
                 size: ModalSize.LARGE,
-                title: <LocalizedString value="AddCarTrip" />,
+                title: <LocalizedString value="UpdateCarTrip" />,
             })
         );
     }, [onCloseModalCallback]);
@@ -100,25 +68,23 @@ const AddCarTripModal: FunctionComponent = () => {
     }, []);
 
     const onSaveCallback = useCallback(() => {
-        // Add the distance to milage start for saving
-        dispatch(
-            addCarTripItem({ ...details, MilageStart: details.MilageStart + toNumber(details.Distance.toString()) })
-        );
+        // Make sure to 'merge' the current trip so we have all the required props and tripid
+        dispatch(updateCarTripItem({ ...currentCarTrip, ...details }));
     }, [details]);
 
     const onChangeCallback = useCallback(
         (updatedData) => {
             const newDetails = updatedData as typeof details;
 
-            if (newDetails.CarId !== selectedCar.CarId) {
+            if (newDetails.CarId !== selectedCar.CarId && details.IsEditMilageStartAllowed) {
                 const newSelectedCar = getSelectedCar(carItems, newDetails.CarId);
                 setSelectedCar(newSelectedCar);
                 newDetails.MilageStart = newSelectedCar.MilageStart;
             }
 
-            setDetails(newDetails);
+            setDetails({ ...currentCarTrip, ...newDetails });
         },
-        [carItems, selectedCar]
+        [carItems, details, selectedCar]
     );
 
     useEffect(() => {
@@ -134,34 +100,19 @@ const AddCarTripModal: FunctionComponent = () => {
 
     useEffect(() => {
         dispatch(getCars());
-        dispatch(getDefaultCarId());
-        dispatch(getDefaultStartingPoint());
     }, []);
 
     useEffect(() => {
         if (cars) {
             setCarItems(cars);
+            setSelectedCar(getSelectedCar(cars, currentCarTrip.CarId));
         }
     }, [cars]);
 
     useEffect(() => {
-        if (carItems && carItems.length !== 0 && defaultCarId !== EMPTY_VALUE_SELECTION && isEmpty(selectedCar)) {
-            const newCar = getSelectedCar(carItems, defaultCarId, true);
-            setDetails({ ...details, CarId: newCar.CarId, MilageStart: newCar.MilageStart });
-            setSelectedCar(newCar);
-        }
-    }, [carItems, defaultCarId, details]);
-
-    useEffect(() => {
-        if (details.Departure === EMPTY_DISPLAY_VALUE_SELECTION && defaultStartingPoint) {
-            setDetails({ ...details, Departure: defaultStartingPoint });
-        }
-    }, [defaultStartingPoint, details]);
-
-    useEffect(() => {
         onChangeModalOptionsCallback([
             <Button
-                iconType={IconType.PLUS}
+                iconType={IconType.CHECK}
                 isDisabled={!hasValidInput}
                 isLoading={isSaving}
                 key={1}
@@ -169,7 +120,7 @@ const AddCarTripModal: FunctionComponent = () => {
                 size={ButtonSize.SMALL}
                 variant={ButtonVariant.FILLED}
             >
-                <LocalizedString value="AddAndClose" />
+                <LocalizedString value="SaveAndClose" />
             </Button>,
         ]);
     }, [details, hasValidInput, isSaving]);
@@ -185,7 +136,7 @@ const AddCarTripModal: FunctionComponent = () => {
                 {
                     component: EditableDataComponent.DROPDOWN,
                     errorMessage: genericErrorMessages.required,
-                    isEditable: true,
+                    isEditable: details.IsEditMilageStartAllowed,
                     isRequired: true,
                     label: <LocalizedString value="Car" />,
                     name: 'CarId',
@@ -213,7 +164,7 @@ const AddCarTripModal: FunctionComponent = () => {
                 {
                     component: EditableDataComponent.INPUTNUMBER,
                     errorMessage: genericErrorMessages.required,
-                    isEditable: true,
+                    isEditable: details.IsEditMilageStartAllowed,
                     isRequired: true,
                     label: <LocalizedString value="Distance" />,
                     min: 1,
@@ -269,6 +220,7 @@ const AddCarTripModal: FunctionComponent = () => {
                 isSaving={isSaving}
                 onChange={onChangeCallback}
                 title={''}
+                warnings={!details.IsEditMilageStartAllowed ? [notEditableWarning] : undefined}
             />
             {violations && (
                 <ViolationList dangerouslySetInnerHTML={{ __html: getViolationTexts(violations).join() }} isError />
@@ -277,4 +229,4 @@ const AddCarTripModal: FunctionComponent = () => {
     );
 };
 
-export default AddCarTripModal;
+export default UpdateCarTripModal;

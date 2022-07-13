@@ -13,6 +13,7 @@ export interface BaseCarTripItem {
 export interface CarTripItem extends BaseCarTripItem {
     IsDeleteAllowed: boolean;
     IsEditAllowed: boolean;
+    IsEditMilageStartAllowed: boolean;
     LicensePlate: string;
     TripDate: Date;
     TripId: number;

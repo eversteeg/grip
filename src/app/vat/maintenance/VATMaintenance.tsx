@@ -2,7 +2,7 @@ import { Button, ButtonSize, ButtonVariant, IconType, PanelHeader, Status } from
 import { closeDialog, openDialog } from '../../state/dialog/actions';
 import { Column, Row } from '../../components/atoms/grid/Grid';
 import { deleteVAT, getVAT } from './_state/actions';
-import { EDIT_MODE, NR_OF_TABLE_ROWS_SMALL } from '../../globals/constants';
+import { EDIT_MODE, TABLE_NR_OF_ROWS_SMALL } from '../../globals/constants';
 import { PanelHeaderOption, PanelHeaderOptions } from '../../components/molecules/panelHeader/PanelHeader.sc';
 import React, { FunctionComponent, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { shallowEqual, useDispatch } from 'react-redux';
@@ -196,7 +196,7 @@ const VATMaintenance: FunctionComponent = () => {
                     <Table
                         instance={tableInstance}
                         isLoading={isLoading}
-                        numberOfRowsPerTable={NR_OF_TABLE_ROWS_SMALL}
+                        numberOfRowsPerTable={TABLE_NR_OF_ROWS_SMALL}
                         onClickRow={onClickRowCallback}
                         showRowsInCard
                     />

@@ -11,27 +11,31 @@ import {
 import { closeDialog, openDialog } from '../state/dialog/actions';
 import { Column, Row } from '../components/atoms/grid/Grid';
 import { deleteCarTripItem, getCarTripItems, setIsCarTripModalVisible } from './_state/actions';
-import { EDIT_MODE, NR_OF_TABLE_ROWS_SMALL } from '../globals/constants';
 import { PanelHeaderOption, PanelHeaderOptions } from '../components/molecules/panelHeader/PanelHeader.sc';
 import React, { FunctionComponent, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { setMaxBodyHeight, setModalChildren } from '../state/modal/actions';
 import { shallowEqual, useDispatch } from 'react-redux';
-import AddCarTripModal from './modal/AddCarTripModal';
+import AddCarTripModal from './modal/add/AddCarTripModal';
 import { CarTripItem } from '../../@types/car/CarTripItem';
 import DatePicker from './datePicker/DatePicker';
+import { EDIT_MODE } from '../globals/constants';
 import LocalizedString from '../components/atoms/localizedString/LocalizedString';
 import moment from 'moment';
 import Table from '../components/organisms/table/Table';
 import { tableColumnsCarTripItems } from './tableColumnsCarTripItems';
 import { Row as TableRow } from 'react-table';
 import { ThemeContext } from 'styled-components';
+import UpdateCarTripModal from './modal/update/UpdateCarTripModal';
 import useSelector from '../state/useSelector';
+
+const MAX_BODY_HEIGHT_MODAL = '450px';
 
 const CarTripOverview: FunctionComponent = () => {
     const dispatch = useDispatch();
     const [editMode, setEditMode] = useState<EDIT_MODE>(EDIT_MODE.ADD);
     const theme = useContext(ThemeContext);
     const [carTrips, setCarTrips] = useState([] as Array<CarTripItem>);
+    const [selectedCarTrip, setSelectedCarTrip] = useState<CarTripItem>({} as CarTripItem);
 
     const [selectedDateFrom, setSelectedDateFrom] = useState<string>(
         formatAsSystemDate(moment().subtract(4, 'months'))
@@ -47,9 +51,9 @@ const CarTripOverview: FunctionComponent = () => {
 
     const onEditCallback = useCallback((carTrip: CarTripItem) => {
         if (carTrip.IsEditAllowed) {
-            // setSelectedVAT(vat);
+            setSelectedCarTrip(carTrip);
             setEditMode(EDIT_MODE.EDIT);
-            // setIsDialogVisible(true);
+            dispatch(setIsCarTripModalVisible(true));
         }
     }, []);
 
@@ -127,9 +131,17 @@ const CarTripOverview: FunctionComponent = () => {
     }, [isCarTripsRefreshRequired]);
 
     useEffect(() => {
-        dispatch(setMaxBodyHeight('450px'));
-        dispatch(setModalChildren(isCarTripModalVisible && <AddCarTripModal />));
-    }, [isCarTripModalVisible]);
+        dispatch(setMaxBodyHeight(MAX_BODY_HEIGHT_MODAL));
+        let modal;
+
+        if (isCarTripModalVisible && editMode === EDIT_MODE.ADD) {
+            modal = <AddCarTripModal />;
+        } else if (isCarTripModalVisible && editMode === EDIT_MODE.EDIT) {
+            modal = <UpdateCarTripModal currentCarTrip={selectedCarTrip} />;
+        }
+
+        dispatch(setModalChildren(modal));
+    }, [editMode, isCarTripModalVisible, selectedCarTrip]);
 
     return (
         <>
@@ -165,7 +177,6 @@ const CarTripOverview: FunctionComponent = () => {
                     <Table
                         instance={tableInstance}
                         isLoading={isLoading}
-                        numberOfRowsPerTable={NR_OF_TABLE_ROWS_SMALL}
                         onClickRow={onClickRowCallback}
                         showRowsInCard
                     />

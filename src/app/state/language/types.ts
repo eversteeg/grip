@@ -62,6 +62,7 @@ export interface Translations {
     Destination: string;
     Distance: string;
     DragFile: string;
+    EditDistanceNotAllowed: string;
     Email: string;
     EndDate: string;
     Error404: string;
@@ -115,6 +116,7 @@ export interface Translations {
     ResultsOf: string;
     RowsPerPage: string;
     Save: string;
+    SaveAndClose: string;
     SendInstructions: string;
     Settings: string;
     Show: string;
@@ -132,6 +134,7 @@ export interface Translations {
     UnsavedChangesAlert: string;
     UnsupportedAlert: string;
     UnsupportedAlertText: string;
+    UpdateCarTrip: string;
     Upload: string;
     UploadDate: string;
     UploadFile: string;

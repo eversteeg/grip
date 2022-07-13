@@ -169,26 +169,26 @@ export const getDefaultStartingPoint =
         );
     };
 
-// export const updateVATItem =
-//     (vatItem: VATItem): ThunkResult =>
-//     (dispatch): void => {
-//         dispatch(setIsSaving(true));
+export const updateCarTripItem =
+    (carTripItem: CarTripItem): ThunkResult =>
+    (dispatch): void => {
+        dispatch(setIsSaving(true));
 
-//         dispatch(
-//             backendRequest({
-//                 body: { ...vatItem },
-//                 callbackError: (): void => {
-//                     dispatch(setIsSaving(false));
-//                 },
-//                 callbackSuccess: ({ hasError }: APIResult): void => {
-//                     dispatch(setIsCarTripsRefreshRequired(!hasError));
-//                     dispatch(setIsSaving(false));
-//                 },
-//                 entity: 'vat/UpdateVATItem',
-//                 method: 'PUT',
-//             })
-//         );
-//     };
+        dispatch(
+            backendRequest({
+                body: { ...carTripItem },
+                callbackError: (): void => {
+                    dispatch(setIsSaving(false));
+                },
+                callbackSuccess: ({ hasError }: APIResult): void => {
+                    dispatch(setIsCarTripsRefreshRequired(!hasError));
+                    dispatch(setIsSaving(false));
+                },
+                entity: 'car/UpdateCarTripItem',
+                method: 'PUT',
+            })
+        );
+    };
 
 export const setCarTripItems = (items: CarTripItem[]): CarActionTypes => ({
     payload: items,
