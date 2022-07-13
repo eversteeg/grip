@@ -24,6 +24,7 @@ import {
 } from 'faralley-ui-kit';
 import { closeModal, openModal, setModalOptions } from '../../state/modal/actions';
 import { EMPTY_DISPLAY_VALUE_SELECTION, EMPTY_VALUE_SELECTION } from '../../globals/constants';
+import moment, { Moment } from 'moment';
 import React, { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react';
 import { shallowEqual, useDispatch } from 'react-redux';
 import { BaseCarTripItem } from '../../../@types/car/CarTripItem';
@@ -32,7 +33,6 @@ import GenericEditableInformation from '../../components/molecules/genericEditab
 import { getViolationTexts } from '../../utils/violationFunctions';
 import LocalizedString from '../../components/atoms/localizedString/LocalizedString';
 import { maxInputLengths } from '../../styles/constants';
-import moment from 'moment';
 import { StyledCarTripModal } from './AddCarTripModal.sc';
 import useSelector from '../../state/useSelector';
 import { ViolationList } from '../../components/atoms/violationList/ViolationList.sc';
@@ -52,6 +52,7 @@ const AddCarTripModal: FunctionComponent = () => {
     const genericErrorMessages = useSelector(({ language }) => language.genericErrorMessages);
     const [carItems, setCarItems] = useState([] as Array<Car>);
     const [selectedCar, setSelectedCar] = useState<Car>({} as Car);
+    const isOutsideRange = (day: Moment): boolean => day.isAfter(moment(), 'day');
 
     const { cars, defaultCarId, defaultStartingPoint, isCarTripsRefreshRequired, isLoading, isSaving } = useSelector(
         ({ car }) => car,
@@ -196,6 +197,7 @@ const AddCarTripModal: FunctionComponent = () => {
                     component: EditableDataComponent.DATEPICKER,
                     errorMessage: genericErrorMessages.required,
                     isEditable: true,
+                    isOutsideRange,
                     isRequired: true,
                     label: <LocalizedString value="TripDate" />,
                     name: 'TripDate',

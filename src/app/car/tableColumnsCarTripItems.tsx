@@ -1,7 +1,7 @@
 import { Alignment, IconType, Status, StatusCell, TableColumnActionButtonProps, Theme } from 'faralley-ui-kit';
+import { Column, Row } from 'react-table';
 import React, { ReactNode } from 'react';
 import { CarTripItem } from '../../@types/car/CarTripItem';
-import { Column } from 'react-table';
 import { columnWidths } from '../styles/constants';
 import ContentCell from '../components/tableCells/contentCell/ContentCell';
 import LocalizedString from '../components/atoms/localizedString/LocalizedString';
@@ -62,31 +62,31 @@ export const tableColumnsCarTripItems = (
     {
         Cell: (): ReactNode => <div />,
         accessor: 'IsDeleteAllowed',
-        actionButtons: (row) => {
-            const buttonProps: TableColumnActionButtonProps<CarTripItem>[] = [];
+        actionButtons: ({ original }: Row<CarTripItem>) => {
+            const buttonIconProps = [] as TableColumnActionButtonProps<CarTripItem>[];
 
-            if (row.original.IsEditAllowed) {
-                buttonProps.push({
+            if (original.IsEditAllowed) {
+                buttonIconProps.push({
                     iconType: IconType.PENCIL,
                     onClickAction: (event) => {
                         event.stopPropagation();
-                        onEdit(row.original);
+                        onEdit(original);
                     },
                 });
             }
 
-            if (row.original.IsDeleteAllowed) {
-                buttonProps.push({
+            if (original.IsDeleteAllowed) {
+                buttonIconProps.push({
                     iconType: IconType.TRASHCAN,
                     isRowAction: false,
                     onClickAction: (event) => {
                         event.stopPropagation();
-                        onDelete(row.original);
+                        onDelete(original);
                     },
                 });
             }
 
-            return buttonProps;
+            return buttonIconProps;
         },
         align: Alignment.RIGHT,
         disableSortBy: true,

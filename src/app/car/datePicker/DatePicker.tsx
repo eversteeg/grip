@@ -14,8 +14,7 @@ export interface DatePickerProps {
 const DatePicker: FunctionComponent<DatePickerProps> = ({ filterDate, isLoading, setSelectedDateFrom }) => {
     const locale = useSelector(({ language }) => language.locale);
     const [isFocused, setIsFocused] = useState(false);
-
-    const isOutsideRange = (day: Moment): boolean => day.isSameOrBefore(moment(), 'day');
+    const isOutsideRange = (day: Moment): boolean => day.isAfter(moment(), 'day');
 
     const onDateChangeCallback = useCallback((date: Moment | null) => {
         if (date) {
