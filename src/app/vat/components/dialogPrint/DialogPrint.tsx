@@ -47,7 +47,8 @@ const DialogPrint: FunctionComponent<DialogPrintProps> = ({ isVisible, onCancel 
     const onPrintCallback = useCallback(() => {
         console.log('**************** print *', fileName);
         console.log('html', ConstructVATHtml);
-        openInNewTab(ConstructVATHtml);
+        // openInNewTab(ConstructVATHtml);
+        openInNewTab('www.google.nl');
     }, []);
 
     const onChangeVATTypeCallback = useCallback(

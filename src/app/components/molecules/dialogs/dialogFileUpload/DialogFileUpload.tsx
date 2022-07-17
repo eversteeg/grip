@@ -223,7 +223,7 @@ export const DialogFileUpload: FunctionComponent<DialogFileUploadProps> = ({
         <Dialog
             footerButtons={footerButtons}
             hasButtonClose={false}
-            iconType={iconType || IconType.FILEADD}
+            iconType={iconType || IconType.FILEPLUS}
             isVisible={isVisible}
             title={title || <LocalizedString value="UploadFile" />}
         >

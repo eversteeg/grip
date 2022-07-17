@@ -1,12 +1,4 @@
-import {
-    Alignment,
-    ButtonIcon,
-    IconType,
-    Status,
-    StatusCell,
-    TableColumnActionButtonProps,
-    Theme,
-} from 'faralley-ui-kit';
+import { Alignment, IconType, Status, StatusCell, TableColumnActionButtonProps, Theme } from 'faralley-ui-kit';
 import React, { ReactNode } from 'react';
 import { Column } from 'react-table';
 import { columnWidths } from '../styles/constants';
