@@ -21,6 +21,7 @@ const isPrivateRouteVisible = (isVisibleInMenu = true): boolean => isVisibleInMe
 const Sidebar: FunctionComponent = () => {
     const dispatch = useDispatch();
     const isSidebarVisible = useSelector(({ global }) => global.isSidebarVisible);
+    const envAppVersion = import.meta.env.PACKAGE_VERSION;
 
     const closeSidebarCallback = useCallback(() => {
         dispatch(setIsSidebarVisible(false));
@@ -95,8 +96,8 @@ const Sidebar: FunctionComponent = () => {
                 <Link to={ROUTES.vat.vatOverview}>
                     <LogoWrapper
                         data-tooltip-component={
-                            process.env.version
-                                ? `${getTranslation('Version')} ${process.env.version || getTranslation('Unknown')}`
+                            envAppVersion
+                                ? `${getTranslation('Version')} ${envAppVersion || getTranslation('Unknown')}`
                                 : undefined
                         }
                         data-tooltip-delay

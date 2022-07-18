@@ -40,8 +40,8 @@ const getLoginLayoutVariant = (): number => {
 };
 
 const LoginLayout: FunctionComponent<LoginLayoutProps> = ({ children, hasLogo = true, info, contentWidth }) => {
-    // @TODO; I've implemented this for our own reference, but might be either removed or made into some thing better looking ;-)
-    const versionInfo = `${getTranslation('Version')} ${process.env.version || getTranslation('Unknown')}`;
+    const envAppVersion = import.meta.env.PACKAGE_VERSION;
+    const versionInfo = `${getTranslation('Version')} ${envAppVersion || getTranslation('Unknown')}`;
 
     return (
         <>
@@ -69,7 +69,7 @@ const LoginLayout: FunctionComponent<LoginLayoutProps> = ({ children, hasLogo = 
                     <a href="https://policies.google.com/terms">Terms of Service</a> apply.`,
                         }}
                     />
-                    <div>{process.env.version ? versionInfo : undefined}</div>
+                    <div>{envAppVersion ? versionInfo : undefined}</div>
                 </Info>
             </StyledLoginLayout>
         </>

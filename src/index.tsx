@@ -1,4 +1,3 @@
-import 'core-js/stable';
 import 'faralley-ui-kit/main.css';
 import 'react-dates/initialize';
 import 'react-dates/lib/css/_datepicker.css';
