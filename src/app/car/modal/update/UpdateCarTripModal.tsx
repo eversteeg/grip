@@ -13,6 +13,7 @@ import {
     ModalSize,
     selectOptionsFacade,
     toMoment,
+    toNumber,
 } from 'faralley-ui-kit';
 import { closeModal, openModal, setModalOptions } from '../../../state/modal/actions';
 import { getCars, setIsCarTripModalVisible, updateCarTripItem } from '../../_state/actions';
@@ -68,8 +69,15 @@ const UpdateCarTripModal: FunctionComponent<UpdateCarTripModalProps> = ({ curren
     }, []);
 
     const onSaveCallback = useCallback(() => {
-        // Make sure to 'merge' the current trip so we have all the required props and tripid
-        dispatch(updateCarTripItem({ ...currentCarTrip, ...details }));
+        // Add the distance to milage start for saving
+        dispatch(
+            updateCarTripItem({
+                ...currentCarTrip,
+                ...details,
+                MilageStart:
+                    currentCarTrip.MilageStart + (toNumber(details.Distance.toString()) - currentCarTrip.Distance),
+            })
+        );
     }, [details]);
 
     const onChangeCallback = useCallback(
