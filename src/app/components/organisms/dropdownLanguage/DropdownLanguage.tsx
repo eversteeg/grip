@@ -1,4 +1,4 @@
-import { Dropdown, IconCustomizable, IconCustomizableSize, IconType, Locale } from 'faralley-ui-kit';
+import { Dropdown, IconCustomizable, IconCustomizableSize, IconType, Locale, useConfigContext } from 'faralley-ui-kit';
 import { IconWrapper, StyledDropdownLanguage } from './DropdownLanguage.sc';
 import React, { ChangeEvent, FunctionComponent, useCallback, useContext, useMemo } from 'react';
 import { setIsLocaleChanged, setLocale } from '../../../state/language/actions';
@@ -22,6 +22,7 @@ export interface DropdownLanguageProps {
 const DropdownLanguage: FunctionComponent<DropdownLanguageProps> = ({ hasIcon = true, onChange }) => {
     const theme = useContext(ThemeContext);
     const dispatch = useDispatch();
+    const { updateLocale } = useConfigContext();
     const { locale: currentLocale } = useSelector(({ language }) => language);
 
     const setLocaleCallback = useCallback((event: ChangeEvent<HTMLSelectElement>) => {
@@ -32,6 +33,7 @@ const DropdownLanguage: FunctionComponent<DropdownLanguageProps> = ({ hasIcon = 
         }
 
         dispatch(setIsLocaleChanged(true));
+        updateLocale(event.currentTarget.value as Locales);
     }, []);
 
     const localeOptions = useMemo(

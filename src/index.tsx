@@ -3,6 +3,7 @@ import 'react-dates/initialize';
 import 'react-dates/lib/css/_datepicker.css';
 import 'regenerator-runtime/runtime';
 import App from './app/App';
+import { ConfigProvider } from 'faralley-ui-kit';
 import { Provider } from 'react-redux';
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -14,7 +15,9 @@ document.body.appendChild(root);
 
 ReactDOM.render(
     <Provider store={store}>
-        <App />
+        <ConfigProvider>
+            <App />
+        </ConfigProvider>
     </Provider>,
     root
 );

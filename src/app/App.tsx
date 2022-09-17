@@ -65,6 +65,7 @@ const App: FunctionComponent = () => {
         if (isEmpty(language) && locale) {
             dispatch(setLocale(locale));
             dispatch(setIsLocaleChanged(true));
+            updateLocale(locale);
         }
 
         if (!isEmpty(language)) {
