@@ -152,7 +152,7 @@ const AddCarTripModal: FunctionComponent = () => {
                 key={1}
                 onClick={onSaveCallback}
                 size={ButtonSize.SMALL}
-                variant={ButtonVariant.FILLED}
+                variant={ButtonVariant.PRIMARY}
             >
                 <LocalizedString value="AddAndClose" />
             </Button>,

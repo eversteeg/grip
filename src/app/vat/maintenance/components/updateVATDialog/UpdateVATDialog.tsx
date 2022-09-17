@@ -68,6 +68,7 @@ const UpdateVATDialog: FunctionComponent<UpdateVATDialogProps> = ({ onClose, pre
                         isLoading: isSaving,
                         onClick: onConfirmEditCallback,
                         size: ButtonSize.SMALL,
+                        variant: ButtonVariant.PRIMARY,
                     },
                 ],
                 isScrollable: false,

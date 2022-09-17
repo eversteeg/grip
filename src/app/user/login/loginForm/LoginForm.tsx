@@ -116,7 +116,7 @@ const LoginForm: FunctionComponent = () => {
                         isFullWidth: true,
                         isLoading: isAuthenticating || isVerifyingReCaptchaToken,
                         onClick: verifyRecaptchaCallback,
-                        variant: ButtonVariant.FILLED,
+                        variant: ButtonVariant.PRIMARY,
                     },
                 ]}
                 hasTermsOfUse

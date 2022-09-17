@@ -19,7 +19,7 @@ const UnsupportedAlert: FunctionComponent = () => {
                     children: <LocalizedString value="ContinueAnyway" />,
                     iconType: IconType.CHEVRONRIGHT,
                     onClick: goToLoginCallback,
-                    variant: ButtonVariant.OUTLINE,
+                    variant: ButtonVariant.PRIMARY,
                 },
             ]}
             illustration="club-on-mobile"

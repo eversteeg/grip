@@ -184,7 +184,7 @@ const VATMaintenance: FunctionComponent = () => {
                                         isDisabled={isLoading || !isAddVATAllowed}
                                         onClick={isAddVATAllowed ? onAddCallback : undefined}
                                         size={ButtonSize.SMALL}
-                                        variant={ButtonVariant.TEXT_ONLY}
+                                        variant={ButtonVariant.PRIMARY}
                                     >
                                         <LocalizedString value="Add" />
                                     </Button>

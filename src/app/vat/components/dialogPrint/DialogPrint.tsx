@@ -45,7 +45,9 @@ const DialogPrint: FunctionComponent<DialogPrintProps> = ({ isVisible, onCancel 
     };
 
     const onPrintCallback = useCallback(() => {
+        // eslint-disable-next-line no-console
         console.log('**************** print *', fileName);
+        // eslint-disable-next-line no-console
         console.log('html', ConstructVATHtml);
         // openInNewTab(ConstructVATHtml);
         openInNewTab('www.google.nl');

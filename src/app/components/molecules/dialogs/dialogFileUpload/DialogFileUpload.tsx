@@ -102,7 +102,7 @@ export const DialogFileUpload: FunctionComponent<DialogFileUploadProps> = ({
                 isDisabled: isEditing || !onDelete,
                 onClick: onDelete,
                 size: ButtonSize.SMALL,
-                variant: ButtonVariant.TEXT_ONLY,
+                variant: ButtonVariant.DANGER,
             });
 
             if (onPreviousVersion) {
@@ -132,6 +132,7 @@ export const DialogFileUpload: FunctionComponent<DialogFileUploadProps> = ({
                 isDisabled: !onConfirm,
                 onClick: () => setIsEditing(true),
                 size: ButtonSize.SMALL,
+                variant: ButtonVariant.PRIMARY,
             }
         );
 

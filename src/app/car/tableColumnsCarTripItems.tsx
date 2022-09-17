@@ -67,7 +67,7 @@ export const tableColumnsCarTripItems = (
 
             if (original.IsEditAllowed) {
                 buttonIconProps.push({
-                    iconType: IconType.PENCIL,
+                    icon: { iconType: IconType.PENCIL },
                     onClickAction: (event) => {
                         event.stopPropagation();
                         onEdit(original);
@@ -77,7 +77,7 @@ export const tableColumnsCarTripItems = (
 
             if (original.IsDeleteAllowed) {
                 buttonIconProps.push({
-                    iconType: IconType.TRASHCAN,
+                    icon: { iconType: IconType.TRASHCAN },
                     isRowAction: false,
                     onClickAction: (event) => {
                         event.stopPropagation();

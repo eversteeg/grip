@@ -1,4 +1,4 @@
-import { ButtonProps, ButtonSize, Dialog, DialogProps, IconType, Status } from 'faralley-ui-kit';
+import { ButtonProps, ButtonSize, ButtonVariant, Dialog, DialogProps, IconType, Status } from 'faralley-ui-kit';
 import React, { FunctionComponent } from 'react';
 import LocalizedString from '../../../atoms/localizedString/LocalizedString';
 
@@ -15,6 +15,7 @@ const DialogInactivity: FunctionComponent<DialogInactivityProps> = ({ isVisible,
                 iconType: IconType.CROSS,
                 onClick: onConfirm,
                 size: ButtonSize.SMALL,
+                variant: ButtonVariant.PRIMARY,
             },
         ]}
         hasButtonClose={false}

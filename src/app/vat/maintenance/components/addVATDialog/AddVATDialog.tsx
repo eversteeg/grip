@@ -66,6 +66,7 @@ const AddVATDialog: FunctionComponent<AddVATDialogProps> = ({ onClose }) => {
                         isLoading: isSaving,
                         onClick: onConfirmEditCallback,
                         size: ButtonSize.SMALL,
+                        variant: ButtonVariant.PRIMARY,
                     },
                 ],
                 isScrollable: false,

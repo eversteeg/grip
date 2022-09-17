@@ -1,4 +1,4 @@
-import { ButtonSize, Dialog, IconType, Status } from 'faralley-ui-kit';
+import { ButtonSize, ButtonVariant, Dialog, IconType, Status } from 'faralley-ui-kit';
 import React, { FunctionComponent, useCallback, useEffect, useState } from 'react';
 import LocalizedString from '../../../atoms/localizedString/LocalizedString';
 import { setHasUnsavedChanges } from '../../../../state/shared/navigationInfo/actions';
@@ -53,6 +53,7 @@ const DialogUnsavedChanges: FunctionComponent<DialogUnsavedChangesProps> = ({
                     iconType: IconType.ARROWLEFT,
                     onClick: onCancel,
                     size: ButtonSize.SMALL,
+                    variant: ButtonVariant.PRIMARY,
                 },
             ]}
             hasButtonClose={false}

@@ -229,6 +229,7 @@ const AddVATItemDialog: FunctionComponent<AddVATItemDialogProps> = ({ onClose })
                         isLoading: isLoading || isSaving,
                         onClick: onConfirmEditCallback,
                         size: ButtonSize.SMALL,
+                        variant: ButtonVariant.PRIMARY,
                     },
                 ],
                 isScrollable: false,

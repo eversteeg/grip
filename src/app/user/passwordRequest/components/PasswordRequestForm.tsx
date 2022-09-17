@@ -53,7 +53,7 @@ const LoginForm: FunctionComponent = () => {
                     isFullWidth: true,
                     isLoading,
                     onClick: requestPasswordCallback,
-                    variant: ButtonVariant.FILLED,
+                    variant: ButtonVariant.PRIMARY,
                 },
             ]}
             illustration="password-request"

@@ -126,7 +126,7 @@ const UpdateCarTripModal: FunctionComponent<UpdateCarTripModalProps> = ({ curren
                 key={1}
                 onClick={onSaveCallback}
                 size={ButtonSize.SMALL}
-                variant={ButtonVariant.FILLED}
+                variant={ButtonVariant.PRIMARY}
             >
                 <LocalizedString value="SaveAndClose" />
             </Button>,

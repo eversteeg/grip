@@ -15,6 +15,7 @@ export const StyledTitle = styled(Title)`
 
 const ConstructVATHtml: FunctionComponent = () => {
     const locale = useSelector(({ language }) => language.locale);
+    // eslint-disable-next-line no-console
     console.log('locale', locale);
 
     return (

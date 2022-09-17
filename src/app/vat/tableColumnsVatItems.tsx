@@ -66,7 +66,7 @@ export const tableColumnsVatItems = (
 
             if (row.original.IsEditAllowed) {
                 buttonProps.push({
-                    iconType: IconType.PENCIL,
+                    icon: { iconType: IconType.PENCIL },
                     onClickAction: (event) => {
                         event.stopPropagation();
                         onEdit(row.original);
@@ -76,7 +76,7 @@ export const tableColumnsVatItems = (
 
             if (row.original.IsDeleteAllowed) {
                 buttonProps.push({
-                    iconType: IconType.TRASHCAN,
+                    icon: { iconType: IconType.TRASHCAN },
                     isRowAction: false,
                     onClickAction: (event) => {
                         event.stopPropagation();

@@ -1,6 +1,6 @@
-import { Alignment, ButtonIcon, IconType, Status, StatusCell, Theme } from 'faralley-ui-kit';
+import { Alignment, IconType, Status, StatusCell, TableColumnActionButtonProps, Theme } from 'faralley-ui-kit';
+import { Column, Row } from 'react-table';
 import React, { ReactNode } from 'react';
-import { Column } from 'react-table';
 import { columnWidths } from '../../styles/constants';
 import ContentCell from '../../components/tableCells/contentCell/ContentCell';
 import LocalizedString from '../../components/atoms/localizedString/LocalizedString';
@@ -31,38 +31,34 @@ export const tableColumnsVats = (
         accessor: 'Description',
     },
     {
-        Cell: ({ row }): ReactNode => {
-            const buttons = [];
-
-            if (row.original.IsEditAllowed) {
-                buttons.push(
-                    <ButtonIcon
-                        iconType={IconType.PENCIL}
-                        key={1}
-                        onClick={(event) => {
-                            event.stopPropagation();
-                            onEdit(row.original);
-                        }}
-                    />
-                );
-            }
-
-            if (row.original.IsDeleteAllowed) {
-                buttons.push(
-                    <ButtonIcon
-                        iconType={IconType.TRASHCAN}
-                        key={2}
-                        onClick={(event) => {
-                            event.stopPropagation();
-                            onDelete(row.original);
-                        }}
-                    />
-                );
-            }
-
-            return buttons;
-        },
+        Cell: (): ReactNode => <div />,
         accessor: 'IsDeleteAllowed',
+        actionButtons: ({ original }: Row<VAT>) => {
+            const buttonIconProps = [] as TableColumnActionButtonProps<VAT>[];
+
+            if (original.IsEditAllowed) {
+                buttonIconProps.push({
+                    icon: { iconType: IconType.PENCIL },
+                    onClickAction: (event) => {
+                        event.stopPropagation();
+                        onEdit(original);
+                    },
+                });
+            }
+
+            if (original.IsDeleteAllowed) {
+                buttonIconProps.push({
+                    icon: { iconType: IconType.TRASHCAN },
+                    isRowAction: false,
+                    onClickAction: (event) => {
+                        event.stopPropagation();
+                        onDelete(original);
+                    },
+                });
+            }
+
+            return buttonIconProps;
+        },
         align: Alignment.RIGHT,
         disableSortBy: true,
         hasCellPadding: false,

@@ -158,7 +158,7 @@ const CarTripOverview: FunctionComponent = () => {
                                         isDisabled={isLoading || !isAddCarTripAllowed}
                                         onClick={isAddCarTripAllowed ? onAddCallback : undefined}
                                         size={ButtonSize.SMALL}
-                                        variant={ButtonVariant.TEXT_ONLY}
+                                        variant={ButtonVariant.PRIMARY}
                                     >
                                         <LocalizedString value="Add" />
                                     </Button>

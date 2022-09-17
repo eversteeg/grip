@@ -44,10 +44,15 @@ export default defineConfig(({ mode }) => {
             port,
             open: true,
             proxy: {
-                '/navajo-local': {
+                '/api-oauth-local': {
                     target: 'http://localhost:9090',
                     changeOrigin: true,
-                    rewrite: (path) => path.replace(/^\/navajo-local/, '')
+                    rewrite: (path) => path.replace(/^\/api-oauth-local/, '')
+                },
+                '/api-local': {
+                    target: 'http://localhost:9090',
+                    changeOrigin: true,
+                    rewrite: (path) => path.replace(/^\/api-local/, '')
                 },
                 '/navajo-playground': {
                     target: 'https://clubweb.devnl.sportlink.com/navajo',

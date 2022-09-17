@@ -213,6 +213,7 @@ const UpdateVATItemDialog: FunctionComponent<UpdateVATItemDialogProps> = ({ onCl
                         isLoading: isLoading || isSaving,
                         onClick: onConfirmEditCallback,
                         size: ButtonSize.SMALL,
+                        variant: ButtonVariant.PRIMARY,
                     },
                 ],
                 isScrollable: false,

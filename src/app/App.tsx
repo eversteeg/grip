@@ -1,8 +1,6 @@
-import 'moment/locale/fr';
-import 'moment/locale/nl';
 import { Dialect, Locales, Translations } from './state/language/types';
 import { getPersistUser, logoutUser, setUserSettings } from './state/user/actions';
-import { isEmpty, themeCyrillic, themeCyrillicDark, Tooltip } from 'faralley-ui-kit';
+import { isEmpty, themeCyrillic, themeCyrillicDark, Tooltip, useConfigContext } from 'faralley-ui-kit';
 import { isTheme, THEMES } from './globals/themes';
 import React, { FunctionComponent, useCallback, useEffect } from 'react';
 import { setDialect, setIsLocaleChanged, setLocale } from './state/language/actions';
@@ -18,7 +16,6 @@ import GlobalStyle from './styles/GlobalStyle';
 import { Helmet } from 'react-helmet';
 import { hot } from 'react-hot-loader/root';
 import { LOCAL_STORAGE } from './globals/storage';
-import moment from 'moment';
 import Routes from './routing/Routes';
 import ScrollToTop from './components/atoms/scrollToTop/ScrollToTop';
 import { ThemeProvider } from 'styled-components';
@@ -44,6 +41,7 @@ const App: FunctionComponent = () => {
     const locale = useSelector(({ language }) => language.locale);
     const { dialect, translations } = useSelector(({ language }) => language, shallowEqual);
     const settings = useSelector(({ user }) => user.settings);
+    const { updateLocale } = useConfigContext();
 
     const { hasInactivityTimeout, hasServerError, hasUnauthorizedCall } = useSelector(
         ({ error }) => error,
@@ -76,6 +74,7 @@ const App: FunctionComponent = () => {
                 dispatch(setDialect(languageObject.dialect));
                 dispatch(setLocale(languageObject.locale));
                 dispatch(setIsLocaleChanged(true));
+                updateLocale(languageObject.locale);
             }
         }
 
@@ -83,9 +82,6 @@ const App: FunctionComponent = () => {
 
         // Do the user thing
         dispatch(getPersistUser());
-        // @TODO: figure out how to refresh this correctly
-        // Set new locale for moment
-        moment.locale(locale);
 
         if (isTheme(theme) && theme !== settings.AppTheme) {
             dispatch(setUserSettings({ ...settings, AppTheme: theme }));

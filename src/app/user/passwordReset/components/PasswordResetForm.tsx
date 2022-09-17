@@ -48,7 +48,7 @@ const PasswordResetForm: FunctionComponent = () => {
                     iconType: IconType.LOCKOFF,
                     isFullWidth: true,
                     onClick: onClickButtonLoginCallback,
-                    variant: ButtonVariant.FILLED,
+                    variant: ButtonVariant.PRIMARY,
                 },
             ]}
             illustration="password-reset-succes"
@@ -65,7 +65,7 @@ const PasswordResetForm: FunctionComponent = () => {
                     isFullWidth: true,
                     isLoading,
                     onClick: changePasswordCallback,
-                    variant: ButtonVariant.FILLED,
+                    variant: ButtonVariant.PRIMARY,
                 },
             ]}
             status={hasError ? Status.INVALID : Status.DEFAULT}
