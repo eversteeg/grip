@@ -153,6 +153,13 @@ const CarTripOverview: FunctionComponent = () => {
                         options={
                             <PanelHeaderOptions>
                                 <PanelHeaderOption>
+                                    <DatePicker
+                                        filterDate={selectedDateFrom}
+                                        isLoading={isLoading}
+                                        setSelectedDateFrom={setSelectedDateFrom}
+                                    />
+                                </PanelHeaderOption>
+                                <PanelHeaderOption>
                                     <Button
                                         iconType={IconType.PLUS}
                                         isDisabled={isLoading || !isAddCarTripAllowed}
@@ -162,13 +169,6 @@ const CarTripOverview: FunctionComponent = () => {
                                     >
                                         <LocalizedString value="Add" />
                                     </Button>
-                                </PanelHeaderOption>
-                                <PanelHeaderOption>
-                                    <DatePicker
-                                        filterDate={selectedDateFrom}
-                                        isLoading={isLoading}
-                                        setSelectedDateFrom={setSelectedDateFrom}
-                                    />
                                 </PanelHeaderOption>
                             </PanelHeaderOptions>
                         }

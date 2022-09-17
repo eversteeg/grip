@@ -249,17 +249,6 @@ const VATOverview: FunctionComponent = () => {
                         options={
                             <PanelHeaderOptions>
                                 <PanelHeaderOption>
-                                    <Button
-                                        iconType={IconType.PLUS}
-                                        isDisabled={isLoading || !isAddVATAllowed}
-                                        onClick={isAddVATAllowed ? onAddCallback : undefined}
-                                        size={ButtonSize.SMALL}
-                                        variant={ButtonVariant.TEXT_ONLY}
-                                    >
-                                        <LocalizedString value="Add" />
-                                    </Button>
-                                </PanelHeaderOption>
-                                <PanelHeaderOption>
                                     <Dropdown
                                         name="pickListVATType"
                                         onChange={setSelectedVATTypeCallback}
@@ -279,6 +268,17 @@ const VATOverview: FunctionComponent = () => {
                                         onChange={() => setIsShowAll(!isShowAll)}
                                         value="isShowAll"
                                     />
+                                </PanelHeaderOption>
+                                <PanelHeaderOption>
+                                    <Button
+                                        iconType={IconType.PLUS}
+                                        isDisabled={isLoading || !isAddVATAllowed}
+                                        onClick={isAddVATAllowed ? onAddCallback : undefined}
+                                        size={ButtonSize.SMALL}
+                                        variant={ButtonVariant.PRIMARY}
+                                    >
+                                        <LocalizedString value="Add" />
+                                    </Button>
                                 </PanelHeaderOption>
                             </PanelHeaderOptions>
                         }
