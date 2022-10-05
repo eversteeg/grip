@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import {
     Button,
     ButtonSize,
@@ -15,23 +16,29 @@ import { PanelHeaderOption, PanelHeaderOptions } from '../components/molecules/p
 import React, { FunctionComponent, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { setMaxBodyHeight, setModalChildren } from '../state/modal/actions';
 import { shallowEqual, useDispatch } from 'react-redux';
+import styled, { ThemeContext } from 'styled-components';
 import AddCarTripModal from './modal/add/AddCarTripModal';
 import { CarTripItem } from '../../@types/car/CarTripItem';
 import DatePicker from './datePicker/DatePicker';
 import { EDIT_MODE } from '../globals/constants';
+import { HeaderButtonWrapper } from '../components/layouts/pageLayout/header/Header.sc';
 import LocalizedString from '../components/atoms/localizedString/LocalizedString';
 import moment from 'moment';
+import ReactToPrint from 'react-to-print';
+import { setHeaderContent } from '../state/global/actions';
 import Table from '../components/organisms/table/Table';
 import { tableColumnsCarTripItems } from './tableColumnsCarTripItems';
 import { Row as TableRow } from 'react-table';
-import { ThemeContext } from 'styled-components';
 import UpdateCarTripModal from './modal/update/UpdateCarTripModal';
 import useSelector from '../state/useSelector';
 
 const MAX_BODY_HEIGHT_MODAL = '450px';
+export const StyledTable = styled.div``;
 
 const CarTripOverview: FunctionComponent = () => {
     const dispatch = useDispatch();
+    const headerContent = useSelector(({ global }) => global.headerContent);
+    const [printRef, setPrintRef] = useState<HTMLDivElement | null>(null);
     const [editMode, setEditMode] = useState<EDIT_MODE>(EDIT_MODE.ADD);
     const theme = useContext(ThemeContext);
     const [carTrips, setCarTrips] = useState([] as Array<CarTripItem>);
@@ -143,6 +150,37 @@ const CarTripOverview: FunctionComponent = () => {
         dispatch(setModalChildren(modal));
     }, [editMode, isCarTripModalVisible, selectedCarTrip]);
 
+    useEffect(() => {
+        if (headerContent === undefined) {
+            dispatch(
+                setHeaderContent(
+                    <ReactToPrint
+                        content={() => printRef}
+                        trigger={() => (
+                            <HeaderButtonWrapper>
+                                <Button
+                                    iconType={IconType.FILEDOWNLOAD}
+                                    isInverted
+                                    onClick={() => {}}
+                                    size={ButtonSize.SMALL}
+                                >
+                                    <LocalizedString value="Print" />
+                                </Button>
+                            </HeaderButtonWrapper>
+                        )}
+                    />
+                )
+            );
+        }
+    }, [headerContent, printRef]);
+
+    useEffect(
+        () => (): void => {
+            dispatch(setHeaderContent(undefined));
+        },
+        []
+    );
+
     return (
         <>
             <Row hasHorizontalCorrection>
@@ -174,12 +212,14 @@ const CarTripOverview: FunctionComponent = () => {
                         }
                         title={<LocalizedString value="CarTrips" />}
                     />
-                    <Table
-                        instance={tableInstance}
-                        isLoading={isLoading}
-                        onClickRow={onClickRowCallback}
-                        showRowsInCard
-                    />
+                    <StyledTable ref={setPrintRef}>
+                        <Table
+                            instance={tableInstance}
+                            isLoading={isLoading}
+                            onClickRow={onClickRowCallback}
+                            showRowsInCard
+                        />
+                    </StyledTable>
                 </Column>
             </Row>
         </>
