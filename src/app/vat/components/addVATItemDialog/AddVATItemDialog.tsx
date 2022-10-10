@@ -199,16 +199,20 @@ const AddVATItemDialog: FunctionComponent<AddVATItemDialogProps> = ({ onClose })
 
     // Check if saving is allowed
     useEffect(() => {
+        if (newVATItem.OrganizationId === undefined || isEmpty(newVATItem.OrganizationId)) {
+            setNewVATItem({ ...newVATItem, OrganizationId: selectedOrganization.Id });
+        }
+
         setIsSaveAllowed(
             !isEmpty(newVATItem.VATId) &&
                 !isEmpty(newVATItem.VATType) &&
-                !isEmpty(newVATItem.OrganizationId) &&
+                !isEmpty(newVATItem.OrganizationId || selectedOrganization) &&
                 !isEmpty(amount) &&
                 amount !== '0' &&
                 !isEmpty(newVATItem.ArticleNumber) &&
                 !isEmpty(newVATItem.Description)
         );
-    }, [amount, newVATItem]);
+    }, [amount, newVATItem, selectedOrganization]);
 
     useEffect(() => {
         dispatch(
