@@ -50,6 +50,11 @@ export const tableColumnsVatItems = (
     },
     {
         Cell: ({ value }): ReactNode => <ContentCell value={value} />,
+        Header: <LocalizedString value="ArticleNumber" />,
+        accessor: 'ArticleNumber',
+    },
+    {
+        Cell: ({ value }): ReactNode => <ContentCell value={value} />,
         Header: <LocalizedString value="Percentage" />,
         accessor: 'VATDescription',
     },
